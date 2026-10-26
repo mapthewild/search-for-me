@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Search for me</title>
+<meta name="description" content="The AI arms race has left the job seeker behind. A two-week job search, $50, paid only if it helped.">
+<meta property="og:title" content="Search for me">
+<meta property="og:description" content="The AI arms race has left the job seeker behind.">
+<meta property="og:type" content="website">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&display=swap">
+<style>
+/* Colors and type: warm tint, Hanken Grotesk, one accent.
+   Layout: Moe's own words carry the page (hero, the beaver dam, his four questions).
+   Facts sit under them: the price terms, what you get, the fine print, the sign-up.
+   Accent job: the week labels on what you get. */
+:root {
+  --tint: #F1EFEC;
+  --panel: #F7F6F3;
+  --line: #DCDAD5;
+  --ink: #000000;
+  --text: #585550;
+  --accent: #E4682E;
+  --accent-text: #B4491B;
+  --font: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --column: 440px;
+  --wide: 960px;
+  --gap: 112px;
+  --gap-near: 40px;
+  --radius: 24px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --tint: #141311; --panel: #1C1B18; --line: #34312C; --ink: #F2F0EC; --text: #B5B0A7; --accent: #F0844F; --accent-text: #F0844F; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --tint: #141311; --panel: #1C1B18; --line: #34312C; --ink: #F2F0EC; --text: #B5B0A7; --accent: #F0844F; --accent-text: #F0844F; color-scheme: dark; }
+
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--tint); color: var(--text); font: 400 14px/22px var(--font); letter-spacing: 0.02em; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+h1, h2, h3 { margin: 0; font-size: 14px; line-height: 22px; font-weight: 600; color: var(--ink); text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+.small { font-size: 12px; line-height: 18px; }
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line); }
+a:hover { text-decoration-color: var(--ink); }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+[id] { scroll-margin-top: 72px; }
+
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--tint); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  font-size: 12px; line-height: 16px; color: var(--ink); padding-block: 14px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
+  background: color-mix(in srgb, var(--tint) 72%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.bar nav { display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.bar nav a { text-decoration: none; }
+.bar nav a:hover { text-decoration: underline; }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: var(--gap); padding-block: 48px 140px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.text { width: 100%; max-width: var(--column); display: grid; gap: 22px; }
+.text > h2 { margin-bottom: -12px; }
+.wide { width: 100%; max-width: var(--wide); min-width: 0; }
+.text + .entries { margin-top: calc(var(--gap-near) - var(--gap)); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+
+/* Hero: the wordmark, then Moe's opening */
+.hero { display: grid; gap: 26px; justify-items: center; text-align: center; padding-top: 16px; }
+.wordmark { margin: 0 0 10px; font-size: clamp(72px, 15.5vw, 216px); line-height: 0.86; font-weight: 600; letter-spacing: -0.065em; color: var(--ink); text-wrap: balance; }
+.statement { max-width: 680px; font-size: 34px; line-height: 42px; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; }
+.lede { max-width: 600px; font-size: 18px; line-height: 28px; color: var(--text); text-wrap: pretty; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: center; }
+
+/* The sample brief, drawn as a phone */
+.floating { box-shadow: 0 18px 60px rgb(0 0 0 / 0.14); }
+.phone { width: 300px; max-width: 100%; border: 10px solid var(--ink); border-radius: 44px; background: var(--panel); padding: 28px 16px;
+  display: grid; gap: 14px; align-content: start; text-align: left; font-size: 12px; line-height: 18px; letter-spacing: 0.01em; color: var(--text); }
+.phone .app { color: var(--accent-text); }
+.phone .title { font-size: 17px; line-height: 22px; font-weight: 600; color: var(--ink); }
+.phone .sub { margin-top: -10px; }
+.phone dl { margin: 0; display: grid; gap: 12px; }
+.phone dt { font-weight: 600; color: var(--ink); }
+.phone dd { margin: 0; }
+.phone .draft { border-left: 2px solid var(--line); padding-left: 10px; }
+figure { margin: 8px 0 0; display: grid; gap: 16px; justify-items: center; }
+figcaption { max-width: 300px; text-align: center; text-wrap: balance; }
+
+/* Moe's beaver dam */
+.voice { width: 100%; max-width: 600px; display: grid; gap: 20px; font-size: 22px; line-height: 33px; letter-spacing: 0; color: var(--ink); }
+
+/* Moe's four questions */
+.qa { width: 100%; max-width: 560px; display: grid; gap: 40px; }
+.qa h2 { font-size: 15px; margin-bottom: -16px; }
+.qa article { display: grid; gap: 8px; }
+.qa h3 { font-size: 20px; line-height: 28px; }
+.qa p { font-size: 17px; line-height: 27px; color: var(--ink); }
+
+/* The price */
+.count { max-width: var(--column); display: grid; gap: 20px; justify-items: center; text-align: center; }
+.count .n { font-size: clamp(160px, 24vw, 280px); line-height: 0.8; font-weight: 600; letter-spacing: -0.07em; color: var(--ink); font-variant-numeric: tabular-nums; padding-bottom: 0.08em; }
+.count .say { font-size: 17px; line-height: 26px; color: var(--ink); }
+
+/* What you get, and the fine print */
+.entries { width: 100%; max-width: var(--column); display: grid; gap: 44px; }
+.card { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.card .when { font-size: 12px; line-height: 16px; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+dl.kv { margin: 0; display: grid; gap: 12px; font-size: 13px; line-height: 20px; }
+dl.kv dt { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink); margin-bottom: -10px; }
+dl.kv dd { margin: 0; }
+.fine { gap: 28px; }
+.fine .card { gap: 6px; }
+
+button { font: 600 14px/1 var(--font); letter-spacing: 0.02em; color: var(--panel); background: var(--ink); border: 0; border-radius: 999px; padding: 11px 18px; cursor: pointer; }
+button:hover { opacity: 0.85; }
+button:disabled { opacity: 0.5; cursor: default; }
+button.big { font-size: 16px; padding: 16px 26px; }
+.bar button { font-size: 12px; padding: 8px 14px; }
+
+/* Sign-up */
+.start { max-width: 560px; margin-inline: auto; padding: 40px 36px; display: grid; gap: 20px; }
+.start h2 { font-size: 22px; line-height: 30px; }
+form { display: grid; gap: 10px; }
+label { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink); margin-top: 8px; }
+label span { font-weight: 400; color: var(--text); }
+input, textarea { width: 100%; font: 400 15px/22px var(--font); letter-spacing: 0.01em; color: var(--ink); background: var(--tint); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; }
+textarea { resize: vertical; min-height: 88px; }
+.error { color: var(--accent-text); font-weight: 600; }
+.error:empty { display: none; }
+form button { justify-self: start; margin-top: 10px; }
+.done { font-size: 17px; line-height: 26px; color: var(--ink); }
+.done:empty { display: none; }
+
+/* Sign-ups, shown only to the owner */
+.table-wrap { overflow-x: auto; padding: 24px 28px 16px; }
+.table-wrap h2 { margin-bottom: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 20px; }
+th, td { text-align: left; vertical-align: top; padding: 12px 18px 12px 0; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 12px; line-height: 16px; font-weight: 600; color: var(--ink); }
+td:first-child { color: var(--ink); }
+
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 12px; line-height: 16px;
+  padding-block: 0 32px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+
+@keyframes focus-in { 0% { filter: blur(14px); opacity: 0; transform: scale(1.015); } }
+.intro { animation: focus-in 1.1s var(--ease) both; animation-delay: calc(var(--i, 0) * 110ms); }
+@media (prefers-reduced-motion: reduce) { .intro { animation: none; } }
+@media (max-width: 600px) {
+  :root { --gap: 84px; }
+  .bar nav a { display: none; }
+  .statement { font-size: 27px; line-height: 34px; }
+  .lede { font-size: 17px; line-height: 27px; }
+  .voice { font-size: 19px; line-height: 29px; }
+  .start { padding: 32px 22px; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="bar">
+  <span>Search for me</span>
+  <nav aria-label="Sections">
+    <a href="#how">How it works</a>
+    <a href="#what-you-get">What you get</a>
+    <a href="#fine-print">The fine print</a>
+    <button type="button" data-start>Start</button>
+  </nav>
+</div>
+
+<main>
+  <section class="hero">
+    <h1 class="wordmark intro" style="--i:0">Search for me</h1>
+    <p class="statement intro" style="--i:1">The AI arms race has left the job seeker behind.</p>
+    <p class="lede intro" style="--i:2">There are a million and one services, prompts, and commiserations that come your way, and it’s all so draining. For the cost of what used to be a decent co-pay, I’ll take on your burden of dealing with dead web pages, shady ghost jobs, and also be your human AI wrangler, because we all know that shit gets tired fast.</p>
+    <div class="actions intro" style="--i:3">
+      <button type="button" class="big" data-start>Start my two weeks</button>
+      <a href="#how">How it works</a>
+    </div>
+    <p class="small intro" style="--i:4">Free to start. I take a few people at a time.</p>
+    <figure class="intro" style="--i:5">
+      <div class="phone floating">
+        <p class="app">Search for me · Week 2</p>
+        <p class="title">Tallgrass</p>
+        <p class="sub">A staffing software company</p>
+        <dl>
+          <dt>Who to talk to</dt>
+          <dd>Dana Okafor. You worked together at Larchmere Health in 2016. Her LinkedIn profile and the Tallgrass team page show she now leads operations there.</dd>
+          <dt>What’s open</dt>
+          <dd>A clinical operations lead job, posted on the Tallgrass website on Tuesday.</dd>
+          <dt>Why you</dt>
+          <dd>You ran schedules for 600 nurses and built a staffing dashboard. Tallgrass asks for both in the posting.</dd>
+          <dt>A first message</dt>
+          <dd class="draft">Hi Dana, it’s been a while since Larchmere. I saw Tallgrass is hiring a clinical operations lead, and I’d love ten minutes on what the team needs.</dd>
+        </dl>
+      </div>
+      <figcaption class="small">An example brief, with made-up names.</figcaption>
+    </figure>
+  </section>
+
+  <section class="voice">
+    <p>Let me be your beaver dam. I’ll keep the slop flood away long enough for you to take the time to reach out to people you know, who are looking for people like you, yes you!</p>
+    <p>That’s another part of this service. You leave the shit shoveling to me. Every time you want to blame yourself, just remember, you paid to blame me for a few weeks.</p>
+  </section>
+
+  <section class="qa" id="how">
+    <h2>How it works</h2>
+    <article>
+      <h3>How’s this work?</h3>
+      <p>I talk to you, figure out what worked before, and where your energy is today.</p>
+    </article>
+    <article>
+      <h3>What then?</h3>
+      <p>I take the time to dig into the bowels of the internet to surface people, places, and points of interest for you to pursue.</p>
+    </article>
+    <article>
+      <h3>What if it doesn’t work?</h3>
+      <p>At least you tried something different. God knows mashing the apply button on LinkedIn has done wonders for humanity.</p>
+    </article>
+    <article>
+      <h3>But you said this costs money...</h3>
+      <p>Yes, I figure charging what coaches do wouldn’t make sense, but spending time shoveling shit should be worth something. So pay me if this made a modicum of difference.</p>
+    </article>
+  </section>
+
+  <div class="count" id="price">
+    <p class="n">$50</p>
+    <p class="say">for the two weeks, paid once at the end, and only if you say it helped.</p>
+    <p class="small">No card needed to start, and no subscription.</p>
+    <button type="button" class="big" data-start>Start my two weeks</button>
+  </div>
+
+  <section class="text" id="what-you-get">
+    <h2>What you get</h2>
+  </section>
+  <div class="entries">
+    <article class="card">
+      <p class="when">End of week 1</p>
+      <h3>Where to look</h3>
+      <dl class="kv">
+        <dt>Companies</dt>
+        <dd>10 to 15 that need what you’ve done, each with the reason it fits.</dd>
+        <dt>Open jobs</dt>
+        <dd>Jobs open now at those companies, including ones under titles you wouldn’t have searched.</dd>
+        <dt>People you know</dt>
+        <dd>Where you have a way in through someone you know, or someone who could introduce you.</dd>
+      </dl>
+    </article>
+    <article class="card">
+      <p class="when">End of week 2</p>
+      <h3>Three conversations</h3>
+      <dl class="kv">
+        <dt>Briefs</dt>
+        <dd>For the three companies where you know someone best, what they need and where you fit.</dd>
+        <dt>Who to talk to</dt>
+        <dd>Each name checked on two public pages.</dd>
+        <dt>First messages</dt>
+        <dd>A draft for each. You decide whether to send it.</dd>
+      </dl>
+    </article>
+  </div>
+
+  <section class="text" id="fine-print">
+    <h2>The fine print</h2>
+  </section>
+  <div class="entries fine">
+    <article class="card">
+      <h3>What if I don’t know anyone at these companies?</h3>
+      <p>Then I look for someone who could introduce you. If there’s no one, I say so, and those companies move down the list.</p>
+    </article>
+    <article class="card">
+      <h3>Do you apply for jobs for me?</h3>
+      <p>No. You do the talking. I find where to look and who to ask, and I draft your first messages. I never contact anyone for you.</p>
+    </article>
+    <article class="card">
+      <h3>What happens to my LinkedIn data?</h3>
+      <p>Your contacts file stays on my computer. Claude, the AI I use, reads it to match your contacts to companies. I delete your files 60 days after our last session.</p>
+    </article>
+    <article class="card">
+      <h3>How much of my time does it take?</h3>
+      <p>A first call, then a page to read at the end of each week. You have the conversations when you’re ready.</p>
+    </article>
+    <article class="card">
+      <h3>Who are you?</h3>
+      <p>I’m Moe. I spent 7 years in human resources, then about 10 designing government services.</p>
+    </article>
+  </div>
+
+  <section class="wide" id="start">
+    <div class="panel start">
+      <h2>Start your two weeks</h2>
+      <p id="start-intro">Tell me who you are, and I’ll write to you to set up our first call.</p>
+      <form id="signup" novalidate>
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="fullname" autocomplete="name" required>
+        <label for="f-email">Your email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+        <label for="f-want">What work do you want next? <span>(optional)</span></label>
+        <textarea id="f-want" name="want" rows="3"></textarea>
+        <p id="f-error" class="error" role="alert"></p>
+        <button type="submit" class="big">Start my two weeks</button>
+        <p class="small">Free to start. I use your email only for your search.</p>
+      </form>
+      <p id="done" class="done" role="status"></p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Search for me</span>
+  <span>Moe, 2026</span>
+</footer>
+
+<script>
+(function () {
+  // Where sign-ups go. Empty until Moe picks the form service; until then the box says sign-ups open soon.
+  var ENDPOINT = '';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var form = document.getElementById('signup');
+  var err = document.getElementById('f-error');
+  var done = document.getElementById('done');
+  var nameIn = document.getElementById('f-name');
+  var emailIn = document.getElementById('f-email');
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-start]'), function (b) {
+    b.addEventListener('click', function () {
+      document.getElementById('start').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      setTimeout(function () { if (!form.hidden) nameIn.focus({ preventScroll: true }); }, reduce ? 0 : 450);
+    });
+  });
+
+  if (!ENDPOINT) {
+    form.hidden = true;
+    document.getElementById('start-intro').hidden = true;
+    done.textContent = 'Sign-ups open soon.';
+    return;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    err.textContent = '';
+    var name = nameIn.value.trim(), email = emailIn.value.trim();
+    if (!name) { err.textContent = 'Add your name so I know who to write to.'; nameIn.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Add an email I can write to, like name@example.com.'; emailIn.focus(); return; }
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try {
+      var r = await fetch(ENDPOINT, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+      if (!r.ok) throw new Error('not ok');
+      form.hidden = true;
+      done.textContent = 'You’re in. I’ll write to you at ' + email + ' to set up our first call.';
+    } catch (x) {
+      err.textContent = 'Your sign-up didn’t send. Try again in a moment.';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
