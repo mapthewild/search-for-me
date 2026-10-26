@@ -9,6 +9,8 @@
 <meta property="og:description" content="The AI arms race has left the job seeker behind.">
 <meta property="og:type" content="website">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&display=swap">
 <style>
 /* Colors and type: warm tint, Hanken Grotesk, one accent.
@@ -144,9 +146,21 @@ td:first-child { color: var(--ink); }
 footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 12px; line-height: 16px;
   padding-block: 0 32px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
 
-@keyframes focus-in { 0% { filter: blur(14px); opacity: 0; transform: scale(1.015); } }
-.intro { animation: focus-in 1.1s var(--ease) both; animation-delay: calc(var(--i, 0) * 110ms); }
-@media (prefers-reduced-motion: reduce) { .intro { animation: none; } }
+/* The fall. While the first screen is pinned, scrolling drops a stick figure through a storm of résumés
+   onto the "h" in Search. The rest of the hero unrolls when it scrolls into view. The head script turns
+   this on; without it, or with reduced motion, the figure just stands on the "h". */
+.hero { position: relative; }
+.stage { position: relative; display: grid; justify-items: center; }
+#sky { position: absolute; left: 50%; width: 100vw; margin-left: -50vw; top: calc(-1 * var(--stage-top, 120px)); height: calc(100% + var(--stage-top, 120px)); pointer-events: none; z-index: 3; }
+html.js .stage { padding-top: max(64px, clamp(72px, 15.5vw, 216px) * 0.62); }   /* room for the figure */
+html.fall-intro .drop { height: calc(220vh - var(--stage-top, 120px)); height: calc(220svh - var(--stage-top, 120px)); }
+html.fall-intro .stage { position: sticky; top: var(--stage-top, 120px); height: calc(100vh - var(--stage-top, 120px)); height: calc(100svh - var(--stage-top, 120px)); align-content: end; padding-top: 0; }
+.unfurl { width: 100%; display: grid; gap: 26px; justify-items: center; }
+html.fall-intro .unfurl { clip-path: inset(0 0 100% 0); transform: translateY(-16px); transition: clip-path 1.2s var(--ease), transform 1.2s var(--ease); }
+html.fall-intro .unfurl.open { clip-path: inset(-80px -80px -140px -80px); transform: none; }
+html.fall-intro .unfurl.done { clip-path: none; transition: none; }
+html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s forwards; }   /* if the script never runs */
+@keyframes unfurl-failsafe { to { clip-path: none; transform: none; } }
 @media (max-width: 600px) {
   :root { --gap: 84px; }
   .bar nav a { display: none; }
@@ -156,6 +170,11 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
   .start { padding: 32px 22px; }
 }
 </style>
+<script>
+  // Before the first paint: pin the first screen for the fall, unless the visitor asked for less motion.
+  document.documentElement.classList.add('js');
+  if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('fall-intro');
+</script>
 </head>
 <body>
 
@@ -172,32 +191,39 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
 
 <main>
   <section class="hero">
-    <h1 class="wordmark intro" style="--i:0">Search for me</h1>
-    <p class="statement intro" style="--i:1">The AI arms race has left the job seeker behind.</p>
-    <p class="lede intro" style="--i:2">There are a million and one services, prompts, and commiserations that come your way, and it’s all so draining. For the cost of what used to be a decent co-pay, I’ll take on your burden of dealing with dead web pages, shady ghost jobs, and also be your human AI wrangler, because we all know that shit gets tired fast.</p>
-    <div class="actions intro" style="--i:3">
-      <button type="button" class="big" data-start>Start my two weeks</button>
-      <a href="#how">How it works</a>
-    </div>
-    <p class="small intro" style="--i:4">Free to start. I take a few people at a time.</p>
-    <figure class="intro" style="--i:5">
-      <div class="phone floating">
-        <p class="app">Search for me · Week 2</p>
-        <p class="title">Tallgrass</p>
-        <p class="sub">A staffing software company</p>
-        <dl>
-          <dt>Who to talk to</dt>
-          <dd>Dana Okafor. You worked together at Larchmere Health in 2016. Her LinkedIn profile and the Tallgrass team page show she now leads operations there.</dd>
-          <dt>What’s open</dt>
-          <dd>A clinical operations lead job, posted on the Tallgrass website on Tuesday.</dd>
-          <dt>Why you</dt>
-          <dd>You ran schedules for 600 nurses and built a staffing dashboard. Tallgrass asks for both in the posting.</dd>
-          <dt>A first message</dt>
-          <dd class="draft">Hi Dana, it’s been a while since Larchmere. I saw Tallgrass is hiring a clinical operations lead, and I’d love ten minutes on what the team needs.</dd>
-        </dl>
+    <div class="drop" id="drop">
+      <div class="stage" id="stage">
+        <canvas id="sky" aria-hidden="true"></canvas>
+        <h1 class="wordmark" id="wordmark">Searc<span id="land">h</span> for me</h1>
       </div>
-      <figcaption class="small">An example brief, with made-up names.</figcaption>
-    </figure>
+    </div>
+    <div class="unfurl" id="unfurl">
+      <p class="statement">The AI arms race has left the job seeker behind.</p>
+      <p class="lede">There are a million and one services, prompts, and commiserations that come your way, and it’s all so draining. For the cost of what used to be a decent co-pay, I’ll take on your burden of dealing with dead web pages, shady ghost jobs, and also be your human AI wrangler, because we all know that shit gets tired fast.</p>
+      <div class="actions">
+        <button type="button" class="big" data-start>Start my two weeks</button>
+        <a href="#how">How it works</a>
+      </div>
+      <p class="small">Free to start. I take a few people at a time.</p>
+      <figure>
+        <div class="phone floating">
+          <p class="app">Search for me · Week 2</p>
+          <p class="title">Tallgrass</p>
+          <p class="sub">A staffing software company</p>
+          <dl>
+            <dt>Who to talk to</dt>
+            <dd>Dana Okafor. You worked together at Larchmere Health in 2016. Her LinkedIn profile and the Tallgrass team page show she now leads operations there.</dd>
+            <dt>What’s open</dt>
+            <dd>A clinical operations lead job, posted on the Tallgrass website on Tuesday.</dd>
+            <dt>Why you</dt>
+            <dd>You ran schedules for 600 nurses and built a staffing dashboard. Tallgrass asks for both in the posting.</dd>
+            <dt>A first message</dt>
+            <dd class="draft">Hi Dana, it’s been a while since Larchmere. I saw Tallgrass is hiring a clinical operations lead, and I’d love ten minutes on what the team needs.</dd>
+          </dl>
+        </div>
+        <figcaption class="small">An example brief, with made-up names.</figcaption>
+      </figure>
+    </div>
   </section>
 
   <section class="voice">
@@ -315,6 +341,293 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
   <span>Search for me</span>
   <span>Moe, 2026</span>
 </footer>
+
+<script>
+(function () {
+  // The fall. While the first screen is pinned, scrolling drops a stick figure through a storm of résumés
+  // onto the "h" in Search, and the rest of the hero unrolls when it scrolls into view.
+  // With reduced motion, the figure just stands on the "h".
+  var html = document.documentElement;
+  var drop = document.getElementById('drop');
+  var stage = document.getElementById('stage');
+  var canvas = document.getElementById('sky');
+  var land = document.getElementById('land');
+  var wordmark = document.getElementById('wordmark');
+  var unfurl = document.getElementById('unfurl');
+  var ctx = canvas && canvas.getContext && canvas.getContext('2d');
+  if (!drop || !stage || !ctx || !land || !wordmark || !unfurl) { html.classList.remove('fall-intro'); return; }
+  var intro = html.classList.contains('fall-intro');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var mctx = document.createElement('canvas').getContext('2d');
+  var W = 0, H = 0, D = 1, S = 60, P = 64, gap = null, col = {};
+  var rnd = Math.random;
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
+  function smooth(t) { t = clamp(t); return t * t * (3 - 2 * t); }
+
+  function readColors() {
+    var cs = getComputedStyle(html);
+    ['ink', 'panel', 'line', 'text', 'tint'].forEach(function (k) { col[k] = cs.getPropertyValue('--' + k).trim(); });
+  }
+  // The stage pins just under the bar, and the canvas reaches up behind the bar to the top of the screen.
+  function size() {
+    html.style.setProperty('--stage-top', Math.round(drop.getBoundingClientRect().top + window.scrollY) + 'px');
+    D = Math.max(1, drop.offsetHeight - stage.offsetHeight);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    var w = Math.round(W * dpr), h = Math.round(H * dpr);
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  // Where the feet go: the top of the "h", measured from the font itself.
+  function spot() {
+    var cr = canvas.getBoundingClientRect();
+    var range = document.createRange(); range.selectNodeContents(land);
+    var rr = range.getBoundingClientRect();
+    var cs = getComputedStyle(wordmark), fs = parseFloat(cs.fontSize) || 100;
+    if (gap === null) {
+      mctx.font = '600 ' + fs + 'px ' + cs.fontFamily;
+      var m = mctx.measureText('h');
+      gap = m.fontBoundingBoxAscent && m.actualBoundingBoxAscent ? (m.fontBoundingBoxAscent - m.actualBoundingBoxAscent) / fs : 0.2;
+    }
+    S = Math.max(60, Math.min(130, fs * 0.56)); P = Math.max(S, 64);
+    return { x: rr.left - cr.left + fs * 0.11, y: rr.top - cr.top + gap * fs };
+  }
+
+  // Poses. Angles are in radians and 0 points straight down: a is the upper arm, e the elbow,
+  // h the thigh and k the knee, for left and right. o opens the mouth.
+  var REST = { la: -0.75, ra: 0.75, le: -1.25, re: -1.25, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 };   // hands on hips
+  var TADA = { la: -2.55, ra: 2.55, le: 0.15, re: 0.15, lh: -0.16, rh: 0.16, lk: 0, rk: 0, o: 0 };
+  var CROUCH = { la: -0.9, ra: 0.9, le: 0.6, re: 0.6, lh: -0.6, rh: 0.6, lk: 1.0, rk: 1.0, o: 0 };
+  function flail(t) {
+    return {
+      la: -2.2 + 1.1 * Math.sin(t * 16) + 0.4 * Math.sin(t * 6.1 + 1.3),
+      ra: 2.2 + 1.1 * Math.sin(t * 15.2 + 2.1) + 0.4 * Math.sin(t * 5.7 + 0.4),
+      le: 0.9 + 0.9 * Math.sin(t * 19.3 + 0.7),
+      re: 0.9 + 0.9 * Math.sin(t * 18.1 + 1.9),
+      lh: -0.55 + 0.75 * Math.sin(t * 13.4 + 0.2),
+      rh: 0.55 + 0.75 * Math.sin(t * 12.7 + 2.6),
+      lk: 0.6 + 0.6 * Math.sin(t * 14.2 + 1.1),
+      rk: 0.6 + 0.6 * Math.sin(t * 13.6 + 0.3),
+      o: 1 + 0.3 * Math.sin(t * 11)
+    };
+  }
+  function mix(a, b, t) { var o = {}; for (var k in a) o[k] = lerp(a[k], b[k], t); return o; }
+  // How far below the hips the feet are, so the feet can be put on the "h".
+  function reach(p) { return S * 0.1 * (Math.cos(p.lh) + Math.cos(p.lh + p.lk) + Math.cos(p.rh) + Math.cos(p.rh - p.rk)); }
+
+  // The figure, drawn from the hips: legs, body, arms, then a round head with dot eyes.
+  function figure(x, y, rot, p, squash) {
+    var s = S, torso = s * 0.36, ua = s * 0.17, fa = s * 0.16, th = s * 0.2, sh = s * 0.2, hr = s * 0.12, foot = reach(p);
+    ctx.save();
+    ctx.translate(x, y);
+    if (rot) { ctx.translate(0, -torso / 2); ctx.rotate(rot); ctx.translate(0, torso / 2); }
+    if (squash !== 1) { ctx.translate(0, foot); ctx.scale(1 / Math.sqrt(squash), squash); ctx.translate(0, -foot); }
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = col.ink; ctx.lineWidth = Math.max(2, s * 0.045);
+    function limb(ox, oy, a1, l1, a2, l2) {
+      var x1 = ox + Math.sin(a1) * l1, y1 = oy + Math.cos(a1) * l1;
+      ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(x1, y1); ctx.lineTo(x1 + Math.sin(a2) * l2, y1 + Math.cos(a2) * l2); ctx.stroke();
+    }
+    limb(0, 0, p.lh, th, p.lh + p.lk, sh);
+    limb(0, 0, p.rh, th, p.rh - p.rk, sh);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -torso); ctx.stroke();
+    var shy = -torso + s * 0.035;
+    limb(0, shy, p.la, ua, p.la - p.le, fa);
+    limb(0, shy, p.ra, ua, p.ra + p.re, fa);
+    var hy = -torso - hr - s * 0.012, er = Math.max(1.1, s * 0.014);
+    ctx.fillStyle = col.tint;
+    ctx.beginPath(); ctx.arc(0, hy, hr, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = col.ink;
+    ctx.beginPath(); ctx.arc(-hr * 0.36, hy - hr * 0.12, er, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hr * 0.36, hy - hr * 0.12, er, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = Math.max(1.3, s * 0.022);
+    ctx.beginPath();
+    if (p.o > 0.05) ctx.arc(0, hy + hr * 0.42, hr * 0.2 * p.o, 0, Math.PI * 2);
+    else ctx.arc(0, hy + hr * 0.12, hr * 0.34, 0.22 * Math.PI, 0.78 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+  }
+  // A résumé: a name bar and lines on the front, plain on the back. It flips as it tumbles.
+  function paper(q, k, alpha) {
+    var w = P * 0.25 * k, h = P * 0.325 * k, f = Math.cos(q.fl);
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.translate(q.x, q.y); ctx.rotate(q.rot); ctx.scale(Math.max(0.08, Math.abs(f)), 1);
+    ctx.fillStyle = f >= 0 ? col.panel : col.line;
+    ctx.strokeStyle = col.text; ctx.lineWidth = Math.max(0.8, P * 0.009);
+    ctx.fillRect(-w / 2, -h / 2, w, h); ctx.strokeRect(-w / 2, -h / 2, w, h);
+    if (f >= 0) {
+      ctx.fillStyle = col.ink; ctx.fillRect(-w * 0.36, -h * 0.38, w * 0.48, h * 0.07);
+      ctx.fillStyle = col.text;
+      for (var j = 0; j < 5; j++) ctx.fillRect(-w * 0.36, -h * 0.2 + j * h * 0.12, w * (j % 2 ? 0.6 : 0.72), Math.max(0.8, h * 0.028));
+    }
+    ctx.restore();
+  }
+
+  // Each cloud is drawn once into a small canvas of its own, so it can fade without its inner outlines showing.
+  function cloudSprite(r) {
+    var pad = 3, w = r * 3.15 + pad * 2, h = r * 1.27 + pad * 2, c = document.createElement('canvas');
+    c.width = Math.ceil(w * dpr); c.height = Math.ceil(h * dpr);
+    var g = c.getContext('2d');
+    g.scale(dpr, dpr); g.translate(r * 1.5 + pad, r * 0.75 + pad);
+    g.beginPath();
+    [[0, 0, 1.4, 0.5], [-0.7, 0.12, 0.8, 0.4], [0.75, 0.14, 0.9, 0.38], [0.25, -0.35, 0.6, 0.4]].forEach(function (e) {
+      g.moveTo((e[0] + e[2]) * r, e[1] * r); g.ellipse(e[0] * r, e[1] * r, e[2] * r, e[3] * r, 0, 0, Math.PI * 2);
+    });
+    g.fillStyle = col.panel; g.strokeStyle = col.line; g.lineWidth = 3;
+    g.stroke(); g.fill();
+    return { img: c, w: w, h: h, ox: r * 1.5 + pad, oy: r * 0.75 + pad };
+  }
+  var papers = [], clouds = [], streaks = [], cloudR = 0;
+  function makeClouds() {
+    cloudR = Math.max(S, 70);
+    clouds.forEach(function (c) { c.sprite = cloudSprite(c.r * cloudR); });
+  }
+  function seed() {
+    papers = [];
+    for (var i = 0, n = W < 600 ? 22 : 36; i < n; i++) papers.push({
+      th: rnd() * 6.283, om: (2.2 + rnd() * 2.4) * (rnd() < 0.85 ? 1 : -1),
+      r: 0.8 + rnd() * 1.4, rw: 0.1 + rnd() * 0.25, rf: 1 + rnd() * 2,
+      h: -1.5 + rnd() * 2.4, hw: 0.1 + rnd() * 0.3, hf: 0.7 + rnd() * 1.6,
+      rot: rnd() * 6.283, rs: (rnd() * 2 - 1) * 5, fl: rnd() * 6.283, fs: 3 + rnd() * 6, ph: rnd() * 6.283,
+      free: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, a: 1
+    });
+    clouds = [];
+    for (var j = 0; j < 8; j++) clouds.push({ x: rnd() * W, y: rnd() * 3000, r: 0.35 + rnd() * 0.55, k: 1.1 + rnd() * 1.3 });
+    makeClouds();
+    streaks = [];
+    for (var k = 0; k < 16; k++) streaks.push({ x: rnd() * W, y: rnd() * 3000, l: 40 + rnd() * 90, k: 1.8 + rnd() * 1.6 });
+  }
+  // Clouds stream upward as the figure falls, faster while you scroll. They stay above the wordmark.
+  function sky(t, sc, vel, alpha, bottom) {
+    if (alpha <= 0.01 || bottom <= 0) return;
+    var span = bottom + 260;
+    if (cloudR !== Math.max(S, 70)) makeClouds();
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, bottom); ctx.clip();
+    clouds.forEach(function (c) {
+      var raw = c.y - sc * c.k - t * 34 * c.k, lap = Math.floor(raw / span);
+      var y = raw - lap * span - 130, x = ((c.x + lap * W * 0.37) % W + W) % W, r = c.r * cloudR;
+      var a = alpha * clamp((bottom - y) / (r * 1.6));
+      if (a <= 0.01) return;
+      ctx.globalAlpha = a;
+      ctx.drawImage(c.sprite.img, x - c.sprite.ox, y - c.sprite.oy, c.sprite.w, c.sprite.h);
+    });
+    var sa = alpha * clamp(vel / 1600) * 0.8;
+    if (sa > 0.02) {
+      ctx.globalAlpha = sa; ctx.strokeStyle = col.line; ctx.lineWidth = 1.5;
+      streaks.forEach(function (s) {
+        var raw = s.y - sc * s.k - t * 60, lap = Math.floor(raw / span);
+        var y = raw - lap * span - 130, x = ((s.x + lap * W * 0.29) % W + W) % W;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + s.l); ctx.stroke();
+      });
+    }
+    ctx.restore();
+  }
+  function burst(fx) {
+    papers.forEach(function (q) {
+      q.free = true;
+      q.vx = Math.cos(q.th) * P * (1.2 + rnd() * 2.4) + (q.x - fx) * 0.8;
+      q.vy = -P * (0.8 + rnd() * 2.2);
+    });
+  }
+  function regather() { papers.forEach(function (q) { q.free = false; q.a = 0; }); }
+
+  var FALL = 0.84;   // the share of the pinned scroll spent falling; the rest is a pause on the "h"
+  var state = 'fall', landT = 0, t0 = 0, last = 0, running = false, vel = 0, lastSc = 0, enter = false, side = 1, cx = null, cy = 0;
+  function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
+  function frame(now) {
+    running = false;
+    if (!t0) t0 = last = now;
+    var t = (now - t0) / 1000, dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
+    var sc = Math.min(window.scrollY, D), u = clamp(sc / (D * FALL));
+    vel = lerp(vel, Math.abs(sc - lastSc) / dt, Math.min(1, dt * 6)); lastSc = sc;
+    var sp = spot(), p, x, y, rot = 0, sq = 1, skyA = 1;
+    if (state === 'fall' && u >= 1) { state = 'land'; landT = t; burst(cx === null ? sp.x : cx); }
+    else if (state !== 'fall' && u < 0.96) { state = 'fall'; regather(); }
+    if (state === 'fall') {
+      // Falling: the figure starts high on the screen and meets the "h" as the scroll runs out.
+      p = flail(t);
+      var x0 = sp.x + side * Math.min(W * 0.2, S * 2.6), y0 = Math.max(H * 0.22, 64 + S * 0.7);
+      x = lerp(x0, sp.x, smooth(u)) + Math.sin(t * 2.6) * S * 0.4 * (1 - u);
+      y = lerp(y0, sp.y - reach(p), 0.35 * u + 0.65 * u * u);
+      if (enter) y -= (1 - smooth(t / 1.1)) * (y0 + S * 1.6);   // drops in from above when the page opens
+      rot = (u > 0.3 && u < 0.6 ? smooth((u - 0.3) / 0.3) * Math.PI * 2 : 0) + 0.5 * Math.sin(t * 2.2) * (1 - smooth((u - 0.8) / 0.2));
+    } else {
+      // Landing: a squash, a crouch, arms up, then standing.
+      var tp = t - landT;
+      p = tp < 0.16 ? mix(flail(t), CROUCH, smooth(tp / 0.08))
+        : tp < 0.95 ? mix(CROUCH, TADA, smooth((tp - 0.16) / 0.22))
+        : mix(TADA, REST, smooth((tp - 0.95) / 0.4));
+      x = sp.x; y = sp.y - reach(p);
+      sq = 1 - 0.2 * Math.exp(-tp * 9) * Math.cos(tp * 24);
+      skyA = 1 - smooth(tp / 0.9);
+    }
+    if (cx === null) { cx = x; cy = y - S * 0.2; }
+    cx = lerp(cx, x, Math.min(1, dt * 7)); cy = lerp(cy, y - S * 0.2, Math.min(1, dt * 7));
+    ctx.clearRect(0, 0, W, H);
+    sky(t, sc, vel, skyA, sp.y);
+    var alive = 0;
+    papers.forEach(function (q) {
+      if (!q.free) {
+        q.th += q.om * dt;
+        var r = P * (q.r + q.rw * Math.sin(t * q.rf + q.ph)), hh = P * (q.h + q.hw * Math.sin(t * q.hf + q.ph));
+        q.x = cx + r * Math.cos(q.th); q.z = r * Math.sin(q.th); q.y = cy + hh + q.z * 0.12;
+        q.a = Math.min(1, q.a + dt * 2);
+      } else {
+        q.vy += P * 6 * dt; q.vx *= 1 - 1.2 * dt;
+        q.x += q.vx * dt + Math.sin(t * 3 + q.ph) * P * 0.6 * dt; q.y += q.vy * dt;
+        q.a -= dt * 0.75;
+      }
+      q.rot += q.rs * dt; q.fl += q.fs * dt;
+      if (q.a > 0) alive++;
+    });
+    // Papers behind the figure first, then the figure, then the papers in front.
+    var live = papers.filter(function (q) { return q.a > 0; }).sort(function (a, b) { return a.z - b.z; });
+    live.forEach(function (q) { if (q.z < 0) paper(q, 1 + q.z / (P * 6), 0.8 * clamp(q.a)); });
+    figure(x, y, rot, p, sq);
+    live.forEach(function (q) { if (q.z >= 0) paper(q, 1 + q.z / (P * 6), clamp(q.a)); });
+    if (state === 'land' && t - landT > 2.4 && alive === 0) { state = 'rest'; rest(); return; }
+    kick();
+  }
+  // At rest: the figure stands on the "h".
+  function rest() {
+    var sp = spot();
+    ctx.clearRect(0, 0, W, H);
+    figure(sp.x, sp.y - reach(REST), 0, REST, 1);
+  }
+
+  function start() {
+    readColors(); size();
+    if (intro) {
+      var sp = spot();
+      seed();
+      side = sp.x > W / 2 ? -1 : 1;
+      enter = window.scrollY < 10;
+      window.addEventListener('scroll', function () {
+        if (state === 'rest' && Math.min(window.scrollY, D) >= 0.96 * D * FALL) return;
+        kick();
+      }, { passive: true });
+      // The rest of the hero unrolls once it scrolls into view.
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (!entries.some(function (e) { return e.isIntersecting; })) return;
+          io.disconnect();
+          unfurl.classList.add('open');
+          setTimeout(function () { unfurl.classList.add('done'); }, 1500);
+        }, { rootMargin: '0px 0px -10% 0px' });
+        io.observe(unfurl);
+      } else unfurl.classList.add('open', 'done');
+      kick();
+    } else rest();
+    html.classList.add('fall-ready');
+    window.addEventListener('resize', function () { size(); if (!intro || state === 'rest') rest(); else kick(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { gap = null; if (!intro || state === 'rest') rest(); });
+    var dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)');
+    if (dark && dark.addEventListener) dark.addEventListener('change', function () { readColors(); if (clouds.length) makeClouds(); if (!intro || state === 'rest') rest(); });
+  }
+  try { start(); } catch (e) { html.classList.remove('fall-intro'); }
+})();
+</script>
 
 <script>
 (function () {
