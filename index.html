@@ -130,6 +130,7 @@ textarea { resize: vertical; min-height: 88px; }
 form button { justify-self: start; margin-top: 10px; }
 .done { font-size: 17px; line-height: 26px; color: var(--ink); }
 .done:empty { display: none; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* a trap for spam bots */
 
 /* Sign-ups, shown only to the owner */
 .table-wrap { overflow-x: auto; padding: 24px 28px 16px; }
@@ -291,13 +292,15 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
     <div class="panel start">
       <h2>Start your two weeks</h2>
       <p id="start-intro">Tell me who you are, and I’ll write to you to set up our first call.</p>
-      <form id="signup" novalidate>
+      <form id="signup" action="https://formspree.io/f/xgaaanyj" method="POST" novalidate>
         <label for="f-name">Your name</label>
         <input id="f-name" name="fullname" autocomplete="name" required>
         <label for="f-email">Your email</label>
         <input id="f-email" name="email" type="email" autocomplete="email" required>
         <label for="f-want">What work do you want next? <span>(optional)</span></label>
         <textarea id="f-want" name="want" rows="3"></textarea>
+        <input type="hidden" name="subject" id="f-subject" value="Sign-up from the Search for me page">
+        <div class="hp" aria-hidden="true"><label for="f-gotcha">Leave this empty</label><input id="f-gotcha" name="_gotcha" tabindex="-1" autocomplete="off"></div>
         <p id="f-error" class="error" role="alert"></p>
         <button type="submit" class="big">Start my two weeks</button>
         <p class="small">Free to start. I use your email only for your search.</p>
@@ -315,8 +318,8 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
 
 <script>
 (function () {
-  // Where sign-ups go. Empty until Moe picks the form service; until then the box says sign-ups open soon.
-  var ENDPOINT = '';
+  // Where sign-ups go. Empty means the box says sign-ups open soon.
+  var ENDPOINT = 'https://formspree.io/f/xgaaanyj';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var form = document.getElementById('signup');
   var err = document.getElementById('f-error');
@@ -344,6 +347,7 @@ footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8p
     var name = nameIn.value.trim(), email = emailIn.value.trim();
     if (!name) { err.textContent = 'Add your name so I know who to write to.'; nameIn.focus(); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Add an email I can write to, like name@example.com.'; emailIn.focus(); return; }
+    document.getElementById('f-subject').value = 'Sign-up: ' + name;   // the email subject
     var btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
     try {
