@@ -169,11 +169,52 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
   .voice { font-size: 19px; line-height: 29px; }
   .start { padding: 32px 22px; }
 }
+
+html.fall-intro.v1 .drop, html.fall-intro.v4 .drop { height: calc(195vh - var(--stage-top, 120px)); height: calc(195svh - var(--stage-top, 120px)); }
+html.v1 .stage .statement, html.v4 .stage .statement { margin: 0 0 14px; }
+html.v4 .stage .hero-line { margin: 0 0 18px; max-width: 640px; font-size: 26px; line-height: 34px; }
+html.v4 .stage .actions { margin: 0 0 10px; }
+html.v4 .stage .small { margin: 0 0 6px; }
+html.v4 .unfurl .below-line { max-width: 680px; }
+@media (max-width: 600px) { html.v4 .stage .hero-line { font-size: 21px; line-height: 28px; } }
+html.v4 .story { width: 100%; max-width: 760px; display: grid; gap: 52px; margin: 12px 0; }
+html.v4 .beat { display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: center; text-align: left; }
+html.v4 .beat:nth-child(even) { grid-template-columns: 1fr 240px; }
+html.v4 .beat:nth-child(even) canvas { order: 2; }
+html.v4 .beat canvas { width: 240px; height: 170px; }
+html.v4 .beat p { font-size: 22px; line-height: 32px; color: var(--ink); }
+html.fall-intro.v4 .beat { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+html.fall-intro.v4 .beat.in { opacity: 1; transform: none; }
+.count .turn, .start .turn { font-size: 19px; line-height: 28px; color: var(--ink); max-width: 440px; text-wrap: balance; }
+html.v4 .turn span { display: block; }
+html.v4 .voice { max-width: 760px; }
+@media (min-width: 601px) {
+  html.v4 .story.flip .beat:nth-child(odd) { grid-template-columns: 1fr 240px; }
+  html.v4 .story.flip .beat:nth-child(odd) canvas { order: 2; }
+  html.v4 .story.flip .beat:nth-child(even) { grid-template-columns: 240px 1fr; }
+  html.v4 .story.flip .beat:nth-child(even) canvas { order: 0; }
+}
+.card figure { margin-top: 20px; }
+html.v4 .scene canvas { display: block; width: 240px; height: 170px; }
+html.fall-intro.v4 .scene { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+html.fall-intro.v4 .scene.in { opacity: 1; transform: none; }
+@media (max-width: 600px) {
+  html.v4 .beat, html.v4 .beat:nth-child(even) { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 8px; }
+  html.v4 .beat:nth-child(even) canvas { order: 0; }
+  html.v4 .beat p { font-size: 19px; line-height: 28px; max-width: 340px; }
+}
+html.fall-intro.v4 .unfurl > * { opacity: 0; transform: translateY(14px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+html.fall-intro.v4 .unfurl.open > * { opacity: 1; transform: none; }
+html.fall-intro.v4 .unfurl.open > :nth-child(2) { transition-delay: .25s; }
+html.fall-intro.v4 .unfurl.open > :nth-child(3) { transition-delay: .5s; }
+html.fall-intro.v4 .unfurl.open > :nth-child(4) { transition-delay: .75s; }
+html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
 </style>
 <script>
   // Before the first paint: pin the first screen for the fall, unless the visitor asked for less motion.
   document.documentElement.classList.add('js');
   if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('fall-intro');
+  var v = (location.search.match(/[?&]v=(\d)/) || [])[1] || '4'; if (v) document.documentElement.classList.add('v' + v);
 </script>
 </head>
 <body>
@@ -205,24 +246,6 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
         <a href="#how">How it works</a>
       </div>
       <p class="small">Free to start. I take a few people at a time.</p>
-      <figure>
-        <div class="phone floating">
-          <p class="app">Search for me · Week 2</p>
-          <p class="title">Tallgrass</p>
-          <p class="sub">A staffing software company</p>
-          <dl>
-            <dt>Who to talk to</dt>
-            <dd>Dana Okafor. You worked together at Larchmere Health in 2016. Her LinkedIn profile and the Tallgrass team page show she now leads operations there.</dd>
-            <dt>What’s open</dt>
-            <dd>A clinical operations lead job, posted on the Tallgrass website on Tuesday.</dd>
-            <dt>Why you</dt>
-            <dd>You ran schedules for 600 nurses and built a staffing dashboard. Tallgrass asks for both in the posting.</dd>
-            <dt>A first message</dt>
-            <dd class="draft">Hi Dana, it’s been a while since Larchmere. I saw Tallgrass is hiring a clinical operations lead, and I’d love ten minutes on what the team needs.</dd>
-          </dl>
-        </div>
-        <figcaption class="small">An example brief, with made-up names.</figcaption>
-      </figure>
     </div>
   </section>
 
@@ -234,7 +257,6 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
   <section class="qa" id="how">
     <h2>How it works</h2>
     <article>
-      <h3>How’s this work?</h3>
       <p>I talk to you, figure out what worked before, and where your energy is today.</p>
     </article>
     <article>
@@ -253,8 +275,8 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
 
   <div class="count" id="price">
     <p class="n">$50</p>
-    <p class="say">for the two weeks, paid once at the end, and only if you say it helped.</p>
-    <p class="small">No card needed to start, and no subscription.</p>
+    <p class="say">for the two weeks, paid once at the end, and only if you say it helped (unless this shit shoveling gets too shitty, then it’ll be a billion dollars).</p>
+    <p class="turn">And you get a buddy who cares enough not to positively gaslight you while things are on fire.</p>
     <button type="button" class="big" data-start>Start my two weeks</button>
   </div>
 
@@ -285,6 +307,24 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
         <dt>First messages</dt>
         <dd>A draft for each. You decide whether to send it.</dd>
       </dl>
+      <figure>
+        <div class="phone floating">
+          <p class="app">Search for me · Week 2</p>
+          <p class="title">Tallgrass</p>
+          <p class="sub">A staffing software company</p>
+          <dl>
+            <dt>Who to talk to</dt>
+            <dd>Dana Okafor. You worked together at Larchmere Health in 2016. Her LinkedIn profile and the Tallgrass team page show she now leads operations there.</dd>
+            <dt>What’s open</dt>
+            <dd>A clinical operations lead job, posted on the Tallgrass website on Tuesday.</dd>
+            <dt>Why you</dt>
+            <dd>You ran schedules for 600 nurses and built a staffing dashboard. Tallgrass asks for both in the posting.</dd>
+            <dt>A first message</dt>
+            <dd class="draft">Hi Dana, it’s been a while since Larchmere. I saw Tallgrass is hiring a clinical operations lead, and I’d love ten minutes on what the team needs.</dd>
+          </dl>
+        </div>
+        <figcaption class="small">An example brief, with made-up names.</figcaption>
+      </figure>
     </article>
   </div>
 
@@ -323,8 +363,8 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
         <input id="f-name" name="fullname" autocomplete="name" required>
         <label for="f-email">Your email</label>
         <input id="f-email" name="email" type="email" autocomplete="email" required>
-        <label for="f-want">What work do you want next? <span>(optional)</span></label>
-        <textarea id="f-want" name="want" rows="3"></textarea>
+        <label for="f-want">What work are you proud of, or still think of fondly? <span>(optional)</span></label>
+        <textarea id="f-want" name="proud" rows="3"></textarea>
         <input type="hidden" name="subject" id="f-subject" value="Sign-up from the Search for me page">
         <div class="hp" aria-hidden="true"><label for="f-gotcha">Leave this empty</label><input id="f-gotcha" name="_gotcha" tabindex="-1" autocomplete="off"></div>
         <p id="f-error" class="error" role="alert"></p>
@@ -344,10 +384,11 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
 
 <script>
 (function () {
-  // The fall. While the first screen is pinned, scrolling drops a stick figure through a storm of résumés
-  // onto the "h" in Search, and the rest of the hero unrolls when it scrolls into view.
-  // With reduced motion, the figure just stands on the "h".
   var html = document.documentElement;
+  var VERSION = Number((location.search.match(/[?&]v=(\d)/) || [])[1] || 4);
+  var LINE = VERSION === 1 || VERSION === 4, KEEP3 = VERSION === 2 || VERSION === 4;
+  var CARDS = VERSION === 4 ? ((location.search.match(/[?&]cards=(\w+)/) || [])[1] || (/[?&]faces=0/.test(location.search) ? 'cvs' : 'signals')) : 'cvs';
+  function cardKind(j) { return CARDS === 'signals' ? ['person', 'message', 'spark'][j] : CARDS === 'faces' ? 'person' : 'cv'; }
   var drop = document.getElementById('drop');
   var stage = document.getElementById('stage');
   var canvas = document.getElementById('sky');
@@ -364,12 +405,10 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
   function lerp(a, b, t) { return a + (b - a) * t; }
   function clamp(t) { return t < 0 ? 0 : t > 1 ? 1 : t; }
   function smooth(t) { t = clamp(t); return t * t * (3 - 2 * t); }
-
   function readColors() {
     var cs = getComputedStyle(html);
     ['ink', 'panel', 'line', 'text', 'tint'].forEach(function (k) { col[k] = cs.getPropertyValue('--' + k).trim(); });
   }
-  // The stage pins just under the bar, and the canvas reaches up behind the bar to the top of the screen.
   function size() {
     html.style.setProperty('--stage-top', Math.round(drop.getBoundingClientRect().top + window.scrollY) + 'px');
     D = Math.max(1, drop.offsetHeight - stage.offsetHeight);
@@ -378,7 +417,6 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
-  // Where the feet go: the top of the "h", measured from the font itself.
   function spot() {
     var cr = canvas.getBoundingClientRect();
     var range = document.createRange(); range.selectNodeContents(land);
@@ -389,15 +427,334 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
       var m = mctx.measureText('h');
       gap = m.fontBoundingBoxAscent && m.actualBoundingBoxAscent ? (m.fontBoundingBoxAscent - m.actualBoundingBoxAscent) / fs : 0.2;
     }
-    S = Math.max(60, Math.min(130, fs * 0.56)); P = Math.max(S, 64);
+    S = Math.max(VERSION === 4 ? 66 : 60, Math.min(130, fs * 0.56)); P = Math.max(S, 64);
     return { x: rr.left - cr.left + fs * 0.11, y: rr.top - cr.top + gap * fs };
   }
-
-  // Poses. Angles are in radians and 0 points straight down: a is the upper arm, e the elbow,
-  // h the thigh and k the knee, for left and right. o opens the mouth.
-  var REST = { la: -0.75, ra: 0.75, le: -1.25, re: -1.25, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 };   // hands on hips
+  function helperLetter() { return S > 80 ? 3 : 2; }
+  var letters = [], words = [], turnWords = [], FAINT = 0.18;
+  var TURNS = {
+    a: 'You get a buddy who cares, not a copilot that positively gaslights. End of two weeks: options.',
+    b: 'You get a buddy who cares, not a copilot that positively gaslights. In two weeks, you’ll have options.',
+    c: 'Two weeks with a buddy who cares, not a copilot that positively gaslights. You walk away with options.',
+    d: 'In two weeks you’ll have options, found by a buddy who cares, not a copilot that positively gaslights.',
+    e: 'You get a buddy who cares, not a copilot that positively gaslights. End of two weeks: options to pursue.',
+    f: 'And you get a buddy who cares enough not to positively gaslight you while things are on fire.'
+  };
+  var TURN = TURNS[(location.search.match(/[?&]line=([a-f])/) || [])[1] || 'f'];
+  function wrapLetters() {
+    Array.prototype.slice.call(wordmark.childNodes).forEach(function (n) {
+      if (n.nodeType !== 3) return;
+      var frag = document.createDocumentFragment();
+      n.data.split('').forEach(function (ch) { var s = document.createElement('span'); s.className = 'ltr'; s.textContent = ch; frag.appendChild(s); });
+      wordmark.replaceChild(frag, n);
+    });
+    letters = Array.prototype.slice.call(wordmark.querySelectorAll('.ltr, #land'));
+  }
+  function wrapWords(el, into) {
+    var txt = el.textContent; el.textContent = '';
+    txt.split(' ').forEach(function (wd, i) { var s = document.createElement('span'); s.textContent = (i ? ' ' : '') + wd; el.appendChild(s); (into || words).push(s); });
+  }
+  function letterSpot(i) {
+    var el = letters[i]; if (!el) return null;
+    var cr = canvas.getBoundingClientRect(), b = el.getBoundingClientRect();
+    var cs = getComputedStyle(wordmark), fs = parseFloat(cs.fontSize) || 100;
+    mctx.font = '600 ' + fs + 'px ' + cs.fontFamily;
+    var asc = mctx.measureText('h').fontBoundingBoxAscent || fs * 0.95, ink = mctx.measureText(el.textContent).actualBoundingBoxAscent || fs * 0.52;
+    return { x: b.left - cr.left + b.width * 0.45, y: b.top - cr.top + (asc - ink), left: b.left - cr.left, w: b.width };
+  }
+  var BEATS = [' For the cost of', ' of dealing with', ' and also be your', ' because we all know'];
+  var VOICE_BEATS = [' long enough for you', ' Every time you want'];
+  var stories = [];
+  function buildStory(els, cuts, first, cls) {
+    els = els.filter(Boolean);
+    if (!els.length) return;
+    var parts = [], whole = [];
+    els.forEach(function (el) {
+      var txt = el.textContent.replace(/\s+/g, ' ').trim(), at = 0;
+      whole.push(txt);
+      cuts.forEach(function (c) { var k = txt.indexOf(c, at); if (k > at) { parts.push(txt.slice(at, k)); at = k + 1; } });
+      parts.push(txt.slice(at));
+    });
+    if (parts.length !== els.length + cuts.length || parts.join(' ') !== whole.join(' ')) return;
+    var story = document.createElement('div'); story.className = 'story' + (cls ? ' ' + cls : '');
+    parts.forEach(function (words4, i) {
+      var beat = document.createElement('div'); beat.className = 'beat';
+      var cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
+      var p4 = document.createElement('p'); p4.textContent = words4;
+      beat.appendChild(cv); beat.appendChild(p4); story.appendChild(beat);
+      stories.push({ beat: beat, canvas: cv, scene: first + i, drawn: false });
+    });
+    els[0].parentNode.insertBefore(story, els[0]);
+    els.forEach(function (el) { el.parentNode.removeChild(el); });
+  }
+  function showBeats() {
+    var show = function (s) { if (s.drawn) return; s.drawn = true; s.beat.classList.add('in'); drawScene(s.canvas, s.scene); };
+    if (!intro || !('IntersectionObserver' in window)) { stories.forEach(show); return; }
+    var io4 = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) stories.forEach(function (s) { if (s.beat === e.target) show(s); }); });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    stories.forEach(function (s) { io4.observe(s.beat); });
+  }
+  var SW = 240, SH = 170;
+  function drawScene(cv, i) {
+    var keep = { ctx: ctx, S: S, P: P }, g = cv.getContext('2d');
+    if (!g) return;
+    cv.width = Math.round(SW * dpr); cv.height = Math.round(SH * dpr);
+    ctx = g; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, SW, SH);
+    S = 70; P = 70;
+    try { [sceneDrained, sceneBurden, sceneGhosts, sceneWrangler, sceneTired, sceneDam, sceneReach, sceneShovel, sceneBlame, sceneFine][i](); }
+    finally { ctx = keep.ctx; S = keep.S; P = keep.P; }
+  }
+  function pen(w) { ctx.strokeStyle = col.ink; ctx.fillStyle = col.ink; ctx.lineWidth = w || Math.max(2, S * 0.045); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }
+  function ground(y) { pen(1.5); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(24, y); ctx.lineTo(216, y); ctx.stroke(); ctx.globalAlpha = 1; }
+  function handOf(x, y, p, s, side) {
+    var sy = y - s * 0.36 + s * 0.035, a = side === 'r' ? p.ra : p.la, b2 = side === 'r' ? p.ra + p.re : p.la - p.le;
+    return { x: x + Math.sin(a) * s * 0.17 + Math.sin(b2) * s * 0.16, y: sy + Math.cos(a) * s * 0.17 + Math.cos(b2) * s * 0.16 };
+  }
+  function sceneDrained() {
+    var gy = 152; ground(gy);
+    var SLUMP = { la: -0.25, ra: 0.25, le: -0.1, re: -0.1, lh: -0.18, rh: 0.18, lk: 0.12, rk: 0.12, o: 0.6 };
+    figure(120, gy - reach(SLUMP), 0.14, SLUMP, 1);
+    [[70, 118, -0.4, 'cv'], [170, 110, 0.5, 'message'], [88, 66, 0.3, 'message'], [152, 58, -0.25, 'cv'], [56, 34, 0.6, 'cv'], [186, 38, -0.5, 'message'], [120, 20, 0.1, 'cv']]
+      .forEach(function (c) { paper({ x: c[0], y: c[1], rot: c[2], fl: 0, kind: c[3] }, 0.8, 1); });
+  }
+  function sceneBurden() {
+    var gy = 152; ground(gy);
+    var FREE = { la: -2.5, ra: 2.5, le: -0.3, re: 0.3, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 };
+    figure(70, gy - reach(FREE), 0, FREE, 1);
+    var CARRY = { la: -0.35, ra: 0.3, le: -0.3, re: 2.74, lh: -0.2, rh: 0.2, lk: 0.25, rk: 0.25, o: 0 }, ms = 60, mx = 150;
+    var my = gy - reach(CARRY, ms), hand = handOf(mx, my, CARRY, ms, 'r'), nx = hand.x + 1, ny = hand.y - 2;
+    paper({ x: nx + 15, y: ny - 5, rot: -0.3, fl: 0, kind: 'cv' }, 0.55, 1);
+    paper({ x: nx + 24, y: ny - 1, rot: 0.45, fl: 0, kind: 'message' }, 0.55, 1);
+    pen(1.8); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(nx, ny);
+    ctx.bezierCurveTo(nx + 30, ny - 6, nx + 40, ny + 30, nx + 20, ny + 36);
+    ctx.bezierCurveTo(nx + 4, ny + 40, nx - 4, ny + 20, nx, ny);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    figure(mx, my, 0, CARRY, 1, ms, true);
+  }
+  function sceneGhosts() {
+    var gy = 152; ground(gy);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.fillRect(24, 44, 78, 60); ctx.strokeRect(24, 44, 78, 60);
+    ctx.beginPath(); ctx.moveTo(24, 56); ctx.lineTo(102, 56); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(50, 68); ctx.lineTo(76, 94); ctx.moveTo(76, 68); ctx.lineTo(50, 94); ctx.stroke();
+    var gx = 182, gt = 62;
+    pen(1.8); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(gx - 20, gt + 30); ctx.lineTo(gx - 20, gt); ctx.arc(gx, gt, 20, Math.PI, 0); ctx.lineTo(gx + 20, gt + 30);
+    for (var k = 0; k < 4; k++) ctx.quadraticCurveTo(gx + 20 - k * 10 - 5, gt + 38, gx + 20 - (k + 1) * 10, gt + 30);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = col.ink;
+    ctx.beginPath(); ctx.arc(gx - 7, gt - 2, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(gx + 7, gt - 2, 2.6, 0, Math.PI * 2); ctx.fill();
+    paper({ x: gx - 2, y: gt + 54, rot: -0.2, fl: 0, kind: 'cv' }, 0.7, 1);
+    var SHOO = { la: -1.65, ra: 1.75, le: 0.35, re: -0.35, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0 }, ms = 60;
+    figure(132, gy - reach(SHOO, ms), 0, SHOO, 1, ms, true);
+  }
+  function robot(x, gy, k) {
+    pen(1.8); ctx.fillStyle = col.panel;
+    ctx.fillRect(x - 16 * k, gy - 82 * k, 32 * k, 26 * k); ctx.strokeRect(x - 16 * k, gy - 82 * k, 32 * k, 26 * k);
+    ctx.beginPath(); ctx.moveTo(x, gy - 82 * k); ctx.lineTo(x, gy - 92 * k); ctx.stroke();
+    ctx.fillStyle = col.ink; ctx.beginPath(); ctx.arc(x, gy - 94 * k, 2.6 * k, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(x - 9 * k, gy - 74 * k, 5 * k, 5 * k); ctx.fillRect(x + 4 * k, gy - 74 * k, 5 * k, 5 * k);
+    ctx.fillStyle = col.panel; ctx.fillRect(x - 13 * k, gy - 54 * k, 26 * k, 30 * k); ctx.strokeRect(x - 13 * k, gy - 54 * k, 26 * k, 30 * k);
+    ctx.beginPath(); ctx.moveTo(x - 7 * k, gy - 24 * k); ctx.lineTo(x - 7 * k, gy); ctx.moveTo(x + 7 * k, gy - 24 * k); ctx.lineTo(x + 7 * k, gy); ctx.stroke();
+  }
+  function sceneWrangler() {
+    var gy = 152; ground(gy);
+    var ROPE = { la: -0.5, ra: 2.5, le: -0.3, re: 0.5, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 }, ms = 62, mx = 66;
+    var my = gy - reach(ROPE, ms);
+    figure(mx, my, 0, ROPE, 1, ms, true);
+    var hand = handOf(mx, my, ROPE, ms, 'r'), rx = 170, ry = 100;
+    robot(rx, gy, 1);
+    ctx.beginPath(); ctx.ellipse(rx, ry - 17, 27, 9, -0.12, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hand.x, hand.y); ctx.quadraticCurveTo((hand.x + rx) / 2, ry - 78, rx - 25, ry - 14); ctx.stroke();
+  }
+  function sceneTired() {
+    var gy = 152; ground(gy);
+    var hr = S * 0.12, hx = 50, hy = gy - 6 - hr, hip = 98;
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(30, gy - 9, 34, 9, 4); else ctx.rect(30, gy - 9, 34, 9); ctx.fill(); ctx.stroke();
+    pen();
+    ctx.beginPath();
+    ctx.moveTo(hx + hr - 1, hy + 3); ctx.lineTo(hip, gy - 4);
+    ctx.moveTo(hip, gy - 4); ctx.lineTo(hip + 12, gy - 21); ctx.lineTo(hip + 24, gy - 2);
+    ctx.moveTo(hip, gy - 4); ctx.lineTo(hip + 34, gy - 3);
+    ctx.stroke();
+    ctx.save(); ctx.translate(hx, hy); ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = col.tint; ctx.beginPath(); ctx.arc(0, 0, hr, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.lineWidth = Math.max(1.3, S * 0.022);
+    ctx.beginPath(); ctx.moveTo(-hr * 0.55, -hr * 0.12); ctx.lineTo(-hr * 0.18, -hr * 0.12); ctx.moveTo(hr * 0.18, -hr * 0.12); ctx.lineTo(hr * 0.55, -hr * 0.12);
+    ctx.moveTo(hr * 0.2, hr * 0.42); ctx.arc(0, hr * 0.42, hr * 0.2, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+    var fam = getComputedStyle(wordmark).fontFamily;
+    ctx.fillStyle = col.ink;
+    [[hx + 8, hy - 14, 11], [hx + 18, hy - 28, 14], [hx + 30, hy - 46, 18]].forEach(function (z, i) {
+      ctx.globalAlpha = 0.45 + i * 0.27; ctx.font = '600 ' + z[2] + 'px ' + fam; ctx.fillText('z', z[0], z[1]);
+    });
+    ctx.globalAlpha = 1;
+    var rx = 194; robot(rx, gy, 0.75);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(122, 24, 62, 30, 8); else ctx.rect(122, 24, 62, 30);
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(164, 54); ctx.lineTo(rx - 8, 76); ctx.lineTo(174, 54); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = col.panel; ctx.fillRect(165, 51, 8, 3);
+    ctx.fillStyle = col.ink; [[132, 33, 42], [132, 40, 34], [132, 47, 24]].forEach(function (l) { ctx.fillRect(l[0], l[1], l[2], 2); });
+  }
+  function rrect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+  function waves(x0, x1, y, n) { var st = (x1 - x0) / n; for (var w = 0; w < n; w++) ctx.quadraticCurveTo(x0 + st * (w + 0.5), y - 6, x0 + st * (w + 1), y); }
+  function sceneDam() {
+    var gy = 152, wl = gy - 56; ground(gy);
+    paper({ x: 160, y: wl - 2, rot: 0.5, fl: 0, kind: 'cv' }, 0.7, 1);
+    paper({ x: 184, y: wl, rot: -0.35, fl: 0, kind: 'message' }, 0.7, 1);
+    paper({ x: 206, y: wl - 3, rot: 0.25, fl: 0, kind: 'cv' }, 0.6, 1);
+    ctx.beginPath(); ctx.moveTo(130, gy); ctx.lineTo(130, wl); waves(130, 216, wl, 5); ctx.lineTo(216, gy); ctx.closePath();
+    ctx.fillStyle = col.ink; ctx.globalAlpha = 0.16; ctx.fill();
+    pen(1.5); ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.moveTo(130, wl); waves(130, 216, wl, 5); ctx.stroke();
+    ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.moveTo(160, gy - 34); waves(160, 200, gy - 34, 2); ctx.moveTo(176, gy - 16); waves(176, 210, gy - 16, 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = col.panel; ctx.beginPath(); ctx.moveTo(98, gy); ctx.quadraticCurveTo(104, gy - 64, 126, gy - 66); ctx.quadraticCurveTo(148, gy - 64, 154, gy); ctx.closePath(); ctx.fill();
+    pen(2); ctx.beginPath();
+    [[96, 6, 156, 10], [98, 16, 152, 8], [101, 22, 151, 28], [103, 32, 149, 22], [106, 36, 146, 42], [108, 46, 145, 36],
+     [111, 50, 141, 56], [114, 58, 138, 50], [118, 62, 135, 66], [122, 64, 116, 74], [130, 64, 137, 75]].forEach(function (s) {
+      ctx.moveTo(s[0], gy - s[1]); ctx.lineTo(s[2], gy - s[3]);
+    });
+    ctx.stroke();
+    var PUSH = { la: 1.25, ra: 1.85, le: -0.15, re: -0.1, lh: -0.4, rh: 0.1, lk: 0, rk: 0.15, o: 0 }, ms = 60;
+    figure(86, gy - reach(PUSH, ms), 0.12, PUSH, 1, ms, true);
+    var EASE = { la: -0.3, ra: 0.3, le: 0.1, re: 0.1, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 };
+    figure(40, gy - reach(EASE), 0, EASE, 1);
+  }
+  function sceneReach() {
+    var gy = 152; ground(gy);
+    var SEND = { la: -0.3, ra: 2.3, le: 0.1, re: 0.4, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 }, px = 54, py = gy - reach(SEND);
+    figure(px, py, 0, SEND, 1);
+    var h = handOf(px, py, SEND, S, 'r');
+    var YOU = { la: -1.5, ra: 0.3, le: -0.05, re: 0.1, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.7 }, fx = 184, fy = gy - reach(YOU);
+    figure(fx, fy, 0, YOU, 1);
+    ctx.save(); pen(1.4); ctx.setLineDash([3, 5]); ctx.globalAlpha = 0.6;
+    ctx.beginPath(); ctx.moveTo(h.x + 3, h.y - 3); ctx.quadraticCurveTo(104, 14, 134, 50); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(140, 57); ctx.rotate(0.75);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-10, -8); ctx.lineTo(-5, 0); ctx.lineTo(-10, 7); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-5, 0); ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = col.ink; ctx.font = '700 22px ' + getComputedStyle(wordmark).fontFamily; ctx.fillText('!', fx - 3, fy - 50);
+  }
+  function sceneShovel() {
+    var gy = 152; ground(gy);
+    paper({ x: 40, y: gy - 22, rot: -0.6, fl: 0, kind: 'cv' }, 0.6, 1);
+    paper({ x: 56, y: gy - 30, rot: 0.3, fl: 0, kind: 'message' }, 0.6, 1);
+    paper({ x: 72, y: gy - 21, rot: 0.8, fl: 0, kind: 'cv' }, 0.6, 1);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(24, gy); ctx.quadraticCurveTo(30, gy - 28, 54, gy - 29); ctx.quadraticCurveTo(80, gy - 28, 92, gy); ctx.closePath(); ctx.fill(); ctx.stroke();
+    paper({ x: 66, y: 74, rot: 0.9, fl: 0, kind: 'message' }, 0.55, 1);
+    paper({ x: 86, y: 58, rot: -0.5, fl: 0, kind: 'cv' }, 0.55, 1);
+    var DIG = { la: -0.9, ra: -0.6, le: 0.2, re: -0.5, lh: -0.25, rh: 0.25, lk: 0.2, rk: 0.25, o: 0 }, ms = 60, mx = 116;
+    var my = gy - reach(DIG, ms), hd = handOf(mx, my, DIG, ms, 'l');
+    var ax = mx - 3, ay = my - 20, dx = hd.x - ax, dy = hd.y - ay, len = Math.sqrt(dx * dx + dy * dy) || 1, bx = ax + dx / len * 44, by = ay + dy / len * 44;
+    pen(2.2); ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.save(); ctx.translate(bx, by); ctx.rotate(Math.atan2(dy, dx) - Math.PI / 2);
+    pen(1.6); ctx.fillStyle = col.panel; rrect(-5, -2, 10, 12, 3); ctx.fill(); ctx.stroke(); ctx.restore();
+    figure(mx, my, 0, DIG, 1, ms, true);
+    var SIP = { la: -0.3, ra: 0.4, le: 0.1, re: 2.2, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 }, cx = 190, cy = gy - reach(SIP);
+    figure(cx, cy, 0, SIP, 1);
+    var mh = handOf(cx, cy, SIP, S, 'r');
+    pen(1.5); ctx.fillStyle = col.panel;
+    ctx.fillRect(mh.x - 1, mh.y - 7, 8, 9); ctx.strokeRect(mh.x - 1, mh.y - 7, 8, 9);
+    ctx.beginPath(); ctx.arc(mh.x + 8, mh.y - 2.5, 2.6, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+    ctx.globalAlpha = 0.6; ctx.beginPath();
+    ctx.moveTo(mh.x + 1, mh.y - 10); ctx.quadraticCurveTo(mh.x - 2, mh.y - 14, mh.x + 1, mh.y - 18);
+    ctx.moveTo(mh.x + 5, mh.y - 10); ctx.quadraticCurveTo(mh.x + 2, mh.y - 14, mh.x + 5, mh.y - 18); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  function sceneBlame() {
+    var gy = 152; ground(gy);
+    var POINT = { la: -0.3, ra: 1.57, le: 0.1, re: 0, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.5 };
+    figure(62, gy - reach(POINT), 0, POINT, 1);
+    var ME = { la: -0.9, ra: 0.9, le: -2.4, re: -2.4, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0 }, ms = 60;
+    figure(166, gy - reach(ME, ms), 0, ME, 1, ms, true);
+    var x0 = 96, y0 = 24;
+    pen(1.5); ctx.fillStyle = col.panel; ctx.fillRect(x0, y0, 48, 30); ctx.strokeRect(x0, y0, 48, 30);
+    ctx.fillStyle = col.ink; ctx.fillRect(x0, y0, 48, 6);
+    for (var r = 0; r < 2; r++) for (var d = 0; d < 7; d++) ctx.fillRect(x0 + 4.5 + d * 6, y0 + 11 + r * 8, 3.5, 3.5);
+  }
+  function sceneFine() {
+    var gy = 152; ground(gy);
+    pen(1.3); ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.ellipse(120, 92, 98, 56, -0.08, 3.6, 5.6); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(120, 96, 84, 46, -0.08, 0.3, 2.2); ctx.stroke();
+    ctx.globalAlpha = 1;
+    [[26, 70, -0.7], [40, 118, 0.5], [66, 140, -0.3], [74, 32, -0.2], [168, 30, 0.5], [204, 50, -0.4], [216, 96, 0.6], [196, 134, -0.3]]
+      .forEach(function (c) { paper({ x: c[0], y: c[1], rot: c[2], fl: 0, kind: 'cv' }, 0.62, 1); });
+    var hx = 100, hy = gy - 16;
+    pen(1.8); ctx.beginPath();
+    ctx.moveTo(hx - 12, hy + 1); ctx.lineTo(hx + 8, hy + 1); ctx.moveTo(hx - 12, hy + 1); ctx.lineTo(hx - 14, hy - 26);
+    ctx.moveTo(hx - 12, hy + 1); ctx.lineTo(hx - 12, gy); ctx.moveTo(hx + 6, hy + 1); ctx.lineTo(hx + 6, gy);
+    ctx.moveTo(122, gy - 30); ctx.lineTo(166, gy - 30); ctx.moveTo(128, gy - 30); ctx.lineTo(128, gy); ctx.moveTo(160, gy - 30); ctx.lineTo(160, gy);
+    ctx.stroke();
+    var SIT = { la: -0.35, ra: 1.25, le: 0.1, re: 0.55, lh: 1.5, rh: 1.45, lk: -1.45, rk: 1.45, o: 0 };
+    figure(hx, hy, 0, SIT, 1);
+    var mh = handOf(hx, hy, SIT, S, 'r'), top = gy - 30;
+    pen(1.5); ctx.fillStyle = col.panel; ctx.fillRect(mh.x + 3, top - 10, 9, 10); ctx.strokeRect(mh.x + 3, top - 10, 9, 10);
+    ctx.beginPath(); ctx.arc(mh.x + 3, top - 5, 2.6, Math.PI / 2, Math.PI * 1.5); ctx.stroke();
+    ctx.font = '600 12px ' + getComputedStyle(wordmark).fontFamily;
+    var said = 'This is fine.', tw = ctx.measureText(said).width, bw = tw + 18, bx = 100 - bw / 2;
+    pen(1.5); ctx.fillStyle = col.panel; rrect(bx, 52, bw, 22, 8); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(95, 74); ctx.lineTo(100, 88); ctx.lineTo(106, 74); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = col.panel; ctx.fillRect(96, 71, 9, 3);
+    ctx.fillStyle = col.ink; ctx.fillText(said, bx + 9, 67);
+  }
+  function moeAt(u, settled) {
+    var end = helperLetter(), spots = [];
+    for (var i = 0; i <= end; i++) spots.push(letterSpot(i));
+    var k = settled ? 1 : smooth((u - 0.18) / 0.62), x = lerp(spots[0].x, spots[end].x, k), y = spots[0].y;
+    for (var j = 1; j < spots.length; j++) {
+      var mid = (spots[j - 1].x + spots[j].x) / 2, half = (spots[j].x - spots[j - 1].x) * 0.18;
+      y = lerp(y, spots[j].y, smooth((x - (mid - half)) / (2 * half)));
+    }
+    return { x: x, y: y, k: k, moving: k > 0 && k < 1, phase: (x - spots[0].x) / Math.max(8, helperSize() * 0.3) * Math.PI };
+  }
+  function emerge(u, mv, landed, tp) {
+    var moeX = mv.x;
+    var end = helperLetter();
+    letters.forEach(function (el, i) {
+      var o = 1;
+      if (!landed && i > 0) {
+        if (i <= end) { var s = letterSpot(i); o = FAINT + (1 - FAINT) * smooth((moeX - s.left + s.w * 0.1) / (s.w * 0.5)); }
+        else o = FAINT + (1 - FAINT) * smooth((u - 0.8 - (i - end - 1) * 0.015) / 0.08);
+      }
+      el.style.opacity = o.toFixed(3);
+    });
+    words.forEach(function (el, i) {
+      var at = 0.25 + 0.68 * i / Math.max(1, words.length - 1);
+      el.style.opacity = (landed ? 1 : FAINT + (1 - FAINT) * smooth((u - at) / 0.1)).toFixed(3);
+    });
+    turnWords.forEach(function (el, i) { el.style.opacity = (landed ? smooth((tp - 0.6 - i * 0.06) / 0.3) : 0).toFixed(3); });
+  }
+  function crowdSpots(which) {
+    var node = wordmark.firstChild;
+    if (!node || node.nodeType !== 3 || node.data.length < 5) return [];
+    var cr = canvas.getBoundingClientRect();
+    var cs = getComputedStyle(wordmark), fs = parseFloat(cs.fontSize) || 100;
+    mctx.font = '600 ' + fs + 'px ' + cs.fontFamily;
+    var asc = mctx.measureText('h').fontBoundingBoxAscent || fs * 0.95;
+    return (which || [1, 2, 3, 4]).map(function (i) {
+      var r = document.createRange(); r.setStart(node, i); r.setEnd(node, i + 1);
+      var b = r.getBoundingClientRect(), ink = mctx.measureText(node.data.charAt(i)).actualBoundingBoxAscent || fs * 0.52;
+      return { x: b.left - cr.left + b.width * 0.45, y: b.top - cr.top + (asc - ink) };
+    });
+  }
+  var REST = { la: -0.75, ra: 0.75, le: -1.25, re: -1.25, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 };
   var TADA = { la: -2.55, ra: 2.55, le: 0.15, re: 0.15, lh: -0.16, rh: 0.16, lk: 0, rk: 0, o: 0 };
   var CROUCH = { la: -0.9, ra: 0.9, le: 0.6, re: 0.6, lh: -0.6, rh: 0.6, lk: 1.0, rk: 1.0, o: 0 };
+  var CATCH = { la: -2.8, ra: 2.8, le: 0.1, re: 0.1, lh: -0.18, rh: 0.18, lk: 0, rk: 0, o: 0 };
+  var WAVE = { la: -0.75, ra: 2.1, le: -1.25, re: 1.0, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 };
+  var SURF = { la: -2.6, ra: 2.6, le: 0.25, re: 0.25, lh: -0.25, rh: 0.25, lk: 0.35, rk: 0.35, o: 0 };
+  var HOLD = { la: 0.9, ra: 1.3, le: -1.0, re: 0.8, lh: -0.18, rh: 0.18, lk: 0, rk: 0, o: 0 };
+  var PRESENT = { la: 1.6, ra: 1.9, le: -0.45, re: 0.35, lh: -0.2, rh: 0.25, lk: 0, rk: 0, o: 0 };
+  var STAND = { la: -0.25, ra: 0.25, le: 0.1, re: 0.1, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 };
+  var RECEIVE = { la: -1.5, ra: 0.3, le: 0.25, re: 0.15, lh: -0.18, rh: 0.25, lk: 0.15, rk: 0.1, o: 0 };
   function flail(t) {
     return {
       la: -2.2 + 1.1 * Math.sin(t * 16) + 0.4 * Math.sin(t * 6.1 + 1.3),
@@ -412,12 +769,9 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     };
   }
   function mix(a, b, t) { var o = {}; for (var k in a) o[k] = lerp(a[k], b[k], t); return o; }
-  // How far below the hips the feet are, so the feet can be put on the "h".
-  function reach(p) { return S * 0.1 * (Math.cos(p.lh) + Math.cos(p.lh + p.lk) + Math.cos(p.rh) + Math.cos(p.rh - p.rk)); }
-
-  // The figure, drawn from the hips: legs, body, arms, then a round head with dot eyes.
-  function figure(x, y, rot, p, squash) {
-    var s = S, torso = s * 0.36, ua = s * 0.17, fa = s * 0.16, th = s * 0.2, sh = s * 0.2, hr = s * 0.12, foot = reach(p);
+  function reach(p, s) { return (s || S) * 0.1 * (Math.cos(p.lh) + Math.cos(p.lh + p.lk) + Math.cos(p.rh) + Math.cos(p.rh - p.rk)); }
+  function figure(x, y, rot, p, squash, size, fro) {
+    var s = size || S, torso = s * 0.36, ua = s * 0.17, fa = s * 0.16, th = s * 0.2, sh = s * 0.2, hr = s * 0.12, foot = reach(p, s);
     ctx.save();
     ctx.translate(x, y);
     if (rot) { ctx.translate(0, -torso / 2); ctx.rotate(rot); ctx.translate(0, torso / 2); }
@@ -435,6 +789,14 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     limb(0, shy, p.la, ua, p.la - p.le, fa);
     limb(0, shy, p.ra, ua, p.ra + p.re, fa);
     var hy = -torso - hr - s * 0.012, er = Math.max(1.1, s * 0.014);
+    if (fro) {
+      ctx.fillStyle = col.ink;
+      ctx.beginPath(); ctx.arc(0, hy - hr * 0.3, hr * 1.2, 0, Math.PI * 2); ctx.fill();
+      for (var b = 0; b < 9; b++) {
+        var ang = Math.PI * (0.9 + b * 0.15);
+        ctx.beginPath(); ctx.arc(Math.cos(ang) * hr * 1.15, hy - hr * 0.3 + Math.sin(ang) * hr * 1.05, hr * 0.45, 0, Math.PI * 2); ctx.fill();
+      }
+    }
     ctx.fillStyle = col.tint;
     ctx.beginPath(); ctx.arc(0, hy, hr, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     ctx.fillStyle = col.ink;
@@ -447,23 +809,39 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     ctx.stroke();
     ctx.restore();
   }
-  // A résumé: a name bar and lines on the front, plain on the back. It flips as it tumbles.
   function paper(q, k, alpha) {
-    var w = P * 0.25 * k, h = P * 0.325 * k, f = Math.cos(q.fl);
+    var v4 = VERSION === 4, w = P * 0.25 * k, h = P * 0.325 * k, f = Math.cos(q.fl);
     ctx.save(); ctx.globalAlpha = alpha;
-    ctx.translate(q.x, q.y); ctx.rotate(q.rot); ctx.scale(Math.max(0.08, Math.abs(f)), 1);
-    ctx.fillStyle = f >= 0 ? col.panel : col.line;
+    ctx.translate(q.x, q.y); ctx.rotate(q.rot); ctx.scale(Math.max(v4 ? 0.3 : 0.08, Math.abs(f)), 1);
+    ctx.fillStyle = f >= 0 || v4 ? col.panel : col.line;
     ctx.strokeStyle = col.text; ctx.lineWidth = Math.max(0.8, P * 0.009);
     ctx.fillRect(-w / 2, -h / 2, w, h); ctx.strokeRect(-w / 2, -h / 2, w, h);
-    if (f >= 0) {
-      ctx.fillStyle = col.ink; ctx.fillRect(-w * 0.36, -h * 0.38, w * 0.48, h * 0.07);
+    var kind = f >= 0 ? (q.kind || 'cv') : 'back';
+    ctx.strokeStyle = col.ink; ctx.lineWidth = Math.max(1, P * 0.012);
+    if (kind === 'person') {
+      ctx.beginPath(); ctx.arc(0, -h * 0.16, w * 0.17, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, h * 0.16, w * 0.3, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
+      ctx.fillStyle = col.ink; ctx.fillRect(-w * 0.3, h * 0.27, w * 0.6, Math.max(1.2, h * 0.06));
+    } else if (kind === 'message') {
+      var bw = w * 0.66, bh = h * 0.36, by = -h * 0.12;
+      ctx.beginPath(); ctx.moveTo(-bw / 2, by - bh / 2); ctx.lineTo(bw / 2, by - bh / 2); ctx.lineTo(bw / 2, by + bh / 2);
+      ctx.lineTo(-bw * 0.05, by + bh / 2); ctx.lineTo(-bw * 0.28, by + bh / 2 + h * 0.12); ctx.lineTo(-bw * 0.22, by + bh / 2);
+      ctx.lineTo(-bw / 2, by + bh / 2); ctx.closePath(); ctx.stroke();
+      ctx.fillStyle = col.ink; ctx.fillRect(-bw * 0.32, by - bh * 0.18, bw * 0.64, Math.max(1, h * 0.04)); ctx.fillRect(-bw * 0.32, by + bh * 0.12, bw * 0.42, Math.max(1, h * 0.04));
+      ctx.fillRect(-w * 0.3, h * 0.3, w * 0.6, Math.max(1.2, h * 0.06));
+    } else if (kind === 'spark') {
+      var r1 = w * 0.3, r2 = w * 0.09, cy2 = -h * 0.1;
+      ctx.beginPath();
+      for (var sp4 = 0; sp4 < 8; sp4++) { var aa = sp4 * Math.PI / 4 - Math.PI / 2, rr2 = sp4 % 2 ? r2 : r1; ctx.lineTo(Math.cos(aa) * rr2, cy2 + Math.sin(aa) * rr2); }
+      ctx.closePath(); ctx.fillStyle = col.ink; ctx.fill();
+      ctx.fillRect(-w * 0.3, h * 0.3, w * 0.6, Math.max(1.2, h * 0.06));
+    } else if (kind === 'cv') {
+      ctx.fillStyle = col.ink; ctx.fillRect(-w * 0.36, -h * 0.38, w * 0.48, h * (v4 ? 0.09 : 0.07));
       ctx.fillStyle = col.text;
-      for (var j = 0; j < 5; j++) ctx.fillRect(-w * 0.36, -h * 0.2 + j * h * 0.12, w * (j % 2 ? 0.6 : 0.72), Math.max(0.8, h * 0.028));
+      for (var j = 0, n = v4 ? 4 : 5; j < n; j++) ctx.fillRect(-w * 0.36, -h * 0.2 + j * h * 0.13, w * (j % 2 ? 0.6 : 0.72), Math.max(0.8, h * 0.028));
     }
     ctx.restore();
   }
-
-  // Each cloud is drawn once into a small canvas of its own, so it can fade without its inner outlines showing.
   function cloudSprite(r) {
     var pad = 3, w = r * 3.15 + pad * 2, h = r * 1.27 + pad * 2, c = document.createElement('canvas');
     c.width = Math.ceil(w * dpr); c.height = Math.ceil(h * dpr);
@@ -478,30 +856,34 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     return { img: c, w: w, h: h, ox: r * 1.5 + pad, oy: r * 0.75 + pad };
   }
   var papers = [], clouds = [], streaks = [], cloudR = 0;
+  function cloudScale() { return VERSION === 4 ? Math.max(S * 0.75, 56) : Math.max(S, 70); }
   function makeClouds() {
-    cloudR = Math.max(S, 70);
+    cloudR = cloudScale();
     clouds.forEach(function (c) { c.sprite = cloudSprite(c.r * cloudR); });
   }
   function seed() {
     papers = [];
-    for (var i = 0, n = W < 600 ? 22 : 36; i < n; i++) papers.push({
+    var few = VERSION === 4;
+    for (var i = 0, n = W < 600 ? (few ? 14 : 22) : (few ? 24 : 36); i < n; i++) papers.push({
       th: rnd() * 6.283, om: (2.2 + rnd() * 2.4) * (rnd() < 0.85 ? 1 : -1),
-      r: 0.8 + rnd() * 1.4, rw: 0.1 + rnd() * 0.25, rf: 1 + rnd() * 2,
+      r: few ? 0.7 + rnd() * 1.0 : 0.8 + rnd() * 1.4, rw: 0.1 + rnd() * 0.25, rf: 1 + rnd() * 2,
       h: -1.5 + rnd() * 2.4, hw: 0.1 + rnd() * 0.3, hf: 0.7 + rnd() * 1.6,
       rot: rnd() * 6.283, rs: (rnd() * 2 - 1) * 5, fl: rnd() * 6.283, fs: 3 + rnd() * 6, ph: rnd() * 6.283,
-      free: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, a: 1
+      free: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, a: 1,
+      keep: KEEP3 && i < 3, d: 0.28 + 0.62 * rnd(),
+      j: i, peel: [0.45, 0.62, 0.78][i] || 1
     });
+    papers.forEach(function (q) { q.sr = q.rot; q.sf = q.fl; });
     clouds = [];
-    for (var j = 0; j < 8; j++) clouds.push({ x: rnd() * W, y: rnd() * 3000, r: 0.35 + rnd() * 0.55, k: 1.1 + rnd() * 1.3 });
+    for (var j = 0, nc = VERSION === 4 ? 5 : 8; j < nc; j++) clouds.push({ x: rnd() * W, y: rnd() * 3000, r: 0.35 + rnd() * 0.55, k: 1.1 + rnd() * 1.3 });
     makeClouds();
     streaks = [];
     for (var k = 0; k < 16; k++) streaks.push({ x: rnd() * W, y: rnd() * 3000, l: 40 + rnd() * 90, k: 1.8 + rnd() * 1.6 });
   }
-  // Clouds stream upward as the figure falls, faster while you scroll. They stay above the wordmark.
   function sky(t, sc, vel, alpha, bottom) {
     if (alpha <= 0.01 || bottom <= 0) return;
     var span = bottom + 260;
-    if (cloudR !== Math.max(S, 70)) makeClouds();
+    if (cloudR !== cloudScale()) makeClouds();
     ctx.save();
     ctx.beginPath(); ctx.rect(0, 0, W, bottom); ctx.clip();
     clouds.forEach(function (c) {
@@ -525,14 +907,60 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
   }
   function burst(fx) {
     papers.forEach(function (q) {
+      if (q.keep) return;
       q.free = true;
       q.vx = Math.cos(q.th) * P * (1.2 + rnd() * 2.4) + (q.x - fx) * 0.8;
       q.vy = -P * (0.8 + rnd() * 2.2);
     });
   }
-  function regather() { papers.forEach(function (q) { q.free = false; q.a = 0; }); }
-
-  var FALL = 0.84;   // the share of the pinned scroll spent falling; the rest is a pause on the "h"
+  function regather() { papers.forEach(function (q) { q.free = false; q.drop = false; q.settle = null; q.a = 0; }); }
+  function rowSlot(j, sp) {
+    var dir = sp.x > W / 2 ? -1 : 1;
+    return { x: sp.x + dir * (S * 0.8 + j * P * 0.34), y: sp.y - S * 0.62 - (j === 1 ? S * 0.05 : 0), rot: dir * (j - 1) * 0.1 };
+  }
+  function crowdPose(i, u, tp, landed) {
+    var p;
+    if (!landed) { p = mix(REST, CATCH, smooth((u - 0.45) / 0.35)); p.o = u > 0.35 ? 0.6 : 0; return p; }
+    if (tp < 1.6) { p = mix(CATCH, REST, 0); var w = 0.28 * Math.sin(tp * 10 - i * 1.3); p.la += w; p.ra -= w; return p; }
+    if (tp < 2.0) return mix(CATCH, REST, smooth((tp - 1.6) / 0.4));
+    if (i !== 1) return REST;
+    p = mix(REST, WAVE, smooth((tp - 2.0) / 0.3));
+    if (tp < 8) p.re += 0.35 * Math.sin(tp * 9);
+    return p;
+  }
+  function drawCrowd(spots, u, tp, landed) {
+    var s = S * 0.7;
+    spots.forEach(function (c, i) { var p = crowdPose(i, u, tp, landed); figure(c.x, c.y - reach(p, s), 0, p, 1, s); });
+  }
+  function handsOf(spots) {
+    var s = S * 0.7, x = 0, top = Infinity;
+    spots.forEach(function (c) { x += c.x; top = Math.min(top, c.y - reach(CATCH, s) - 0.64 * s); });
+    return { x: spots.length ? x / spots.length : 0, y: top };
+  }
+  function helperPose(u, tp, landed, mv) {
+    if (landed) return mix(HOLD, PRESENT, smooth((tp - 0.6) / 0.6));
+    var p = mix(REST, HOLD, smooth((u - 0.5) / 0.12)), up = 0;
+    [0.45, 0.62, 0.78].forEach(function (pe) { up = Math.max(up, Math.sin(Math.PI * clamp((u - pe + 0.06) / 0.18))); });
+    p = mix(p, CATCH, 0.7 * up);
+    p.o = u > 0.25 && u < 0.45 ? 0.5 : 0;
+    if (mv && mv.moving) {
+      var sw = Math.sin(mv.phase);
+      p.lh = -0.12 + 0.42 * sw; p.rh = 0.12 - 0.42 * sw; p.lk = 0.35 * Math.max(0, -sw); p.rk = 0.35 * Math.max(0, sw);
+    }
+    return p;
+  }
+  function handMid(x, y, p, s) {
+    var sy = y - s * 0.36 + s * 0.035;
+    var rx = x + Math.sin(p.ra) * s * 0.17 + Math.sin(p.ra + p.re) * s * 0.16, ry = sy + Math.cos(p.ra) * s * 0.17 + Math.cos(p.ra + p.re) * s * 0.16;
+    var lx = x + Math.sin(p.la) * s * 0.17 + Math.sin(p.la - p.le) * s * 0.16, ly = sy + Math.cos(p.la) * s * 0.17 + Math.cos(p.la - p.le) * s * 0.16;
+    return { x: (rx + lx) / 2, y: (ry + ly) / 2 };
+  }
+  function heldPos(j, hm) { return { x: hm.x + (j - 1) * P * 0.06, y: hm.y - P * 0.06, rot: (j - 1) * 0.2 }; }
+  function shownPos(j, hm, sp) {
+    return { x: hm.x + P * 0.14 + j * P * 0.24, y: hm.y - P * 0.1 - (j === 1 ? P * 0.04 : 0), rot: (j - 1) * 0.14 };
+  }
+  function helperSize() { return S * (S <= 70 ? 0.8 : 0.7); }
+  var FALL = LINE ? 0.95 : 0.84;
   var state = 'fall', landT = 0, t0 = 0, last = 0, running = false, vel = 0, lastSc = 0, enter = false, side = 1, cx = null, cy = 0;
   function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
   function frame(now) {
@@ -541,20 +969,53 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
     var t = (now - t0) / 1000, dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
     var sc = Math.min(window.scrollY, D), u = clamp(sc / (D * FALL));
     vel = lerp(vel, Math.abs(sc - lastSc) / dt, Math.min(1, dt * 6)); lastSc = sc;
-    var sp = spot(), p, x, y, rot = 0, sq = 1, skyA = 1;
-    if (state === 'fall' && u >= 1) { state = 'land'; landT = t; burst(cx === null ? sp.x : cx); }
+    var sp = spot(), crowd = VERSION === 3 ? crowdSpots() : [], hands = handsOf(crowd), p, x, y, rot = 0, sq = 1, skyA = 1, tp = 0;
+    var helper = VERSION === 4 && letters.length ? true : null;
+    var tx = VERSION === 3 && crowd.length ? hands.x : sp.x;
+    if (state === 'fall' && u >= 1) {
+      state = 'land'; landT = t; burst(cx === null ? sp.x : cx);
+      if (VERSION === 2) papers.forEach(function (q, i) { if (q.keep) q.settle = { x: q.x, y: q.y, rot: q.rot, fl: q.fl, j: i }; });
+    }
     else if (state !== 'fall' && u < 0.96) { state = 'fall'; regather(); }
     if (state === 'fall') {
-      // Falling: the figure starts high on the screen and meets the "h" as the scroll runs out.
       p = flail(t);
-      var x0 = sp.x + side * Math.min(W * 0.2, S * 2.6), y0 = Math.max(H * 0.22, 64 + S * 0.7);
-      x = lerp(x0, sp.x, smooth(u)) + Math.sin(t * 2.6) * S * 0.4 * (1 - u);
-      y = lerp(y0, sp.y - reach(p), 0.35 * u + 0.65 * u * u);
-      if (enter) y -= (1 - smooth(t / 1.1)) * (y0 + S * 1.6);   // drops in from above when the page opens
+      var x0 = VERSION === 4 ? Math.min(W - S * 0.9, sp.x + S * 2.4) : sp.x + side * Math.min(W * 0.2, S * 2.6), y0 = Math.max(H * 0.22, 64 + S * 0.7);
+      var yEnd = VERSION === 3 && crowd.length ? hands.y + 0.12 * S : sp.y - reach(p);
+      x = lerp(x0, tx, smooth(u)) + Math.sin(t * 2.6) * S * 0.4 * (1 - u);
+      y = lerp(y0, yEnd, 0.35 * u + 0.65 * u * u);
+      if (enter) y -= (1 - smooth(t / 1.1)) * (y0 + S * 1.6);
       rot = (u > 0.3 && u < 0.6 ? smooth((u - 0.3) / 0.3) * Math.PI * 2 : 0) + 0.5 * Math.sin(t * 2.2) * (1 - smooth((u - 0.8) / 0.2));
+      if (VERSION === 3) rot += Math.PI / 2 * smooth((u - 0.75) / 0.25);
+      if (KEEP3) papers.forEach(function (q) {
+        if (q.keep) return;
+        if (!q.free && u > q.d) { q.free = true; q.drop = true; q.vx = (rnd() - 0.5) * P * 1.5; q.vy = P * 0.4; }
+        else if (q.free && q.drop && u < q.d - 0.04) { q.free = false; q.drop = false; q.a = 0; }
+      });
+    } else if (VERSION === 3 && crowd.length) {
+      tp = t - landT;
+      var hy = hands.y + 0.12 * S;
+      if (tp < 1.5) {
+        x = lerp(hands.x, sp.x, smooth((tp - 0.25) / 1.25));
+        y = hy + 0.05 * S * Math.sin(tp * 11) + 0.1 * S * Math.exp(-tp * 6) * Math.sin(tp * 20);
+        rot = Math.PI / 2; p = mix(flail(t), SURF, 0.6);
+      } else {
+        var k2 = smooth((tp - 1.5) / 0.45);
+        p = tp < 1.95 ? mix(SURF, CROUCH, k2) : tp < 2.6 ? mix(CROUCH, TADA, smooth((tp - 1.95) / 0.25)) : mix(TADA, REST, smooth((tp - 2.6) / 0.4));
+        x = sp.x; y = lerp(hy, sp.y - reach(p), k2) - Math.sin(k2 * Math.PI) * 0.3 * S;
+        rot = (1 - k2) * Math.PI / 2;
+        if (tp > 1.95) sq = 1 - 0.2 * Math.exp(-(tp - 1.95) * 9) * Math.cos((tp - 1.95) * 24);
+      }
+      skyA = 1 - smooth(tp / 0.9);
+    } else if (VERSION === 4) {
+      tp = t - landT;
+      p = tp < 0.16 ? mix(flail(t), CROUCH, smooth(tp / 0.08))
+        : tp < 0.6 ? mix(CROUCH, STAND, smooth((tp - 0.16) / 0.3))
+        : mix(STAND, RECEIVE, smooth((tp - 0.6) / 0.4));
+      x = sp.x; y = sp.y - reach(p); rot = -0.12 * smooth((tp - 0.6) / 0.4);
+      sq = 1 - 0.2 * Math.exp(-tp * 9) * Math.cos(tp * 24);
+      skyA = 1 - smooth(tp / 0.9);
     } else {
-      // Landing: a squash, a crouch, arms up, then standing.
-      var tp = t - landT;
+      tp = t - landT;
       p = tp < 0.16 ? mix(flail(t), CROUCH, smooth(tp / 0.08))
         : tp < 0.95 ? mix(CROUCH, TADA, smooth((tp - 0.16) / 0.22))
         : mix(TADA, REST, smooth((tp - 0.95) / 0.4));
@@ -562,41 +1023,112 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
       sq = 1 - 0.2 * Math.exp(-tp * 9) * Math.cos(tp * 24);
       skyA = 1 - smooth(tp / 0.9);
     }
+    var hs = helperSize(), hp = null, hx = 0, hy = 0, hm = null;
+    if (helper) {
+      var mv = moeAt(u, state !== 'fall');
+      hp = helperPose(u, tp, state !== 'fall', mv); hx = mv.x; hy = mv.y - reach(hp, hs); hm = handMid(hx, hy, hp, hs);
+      emerge(u, mv, state !== 'fall', tp);
+    }
     if (cx === null) { cx = x; cy = y - S * 0.2; }
     cx = lerp(cx, x, Math.min(1, dt * 7)); cy = lerp(cy, y - S * 0.2, Math.min(1, dt * 7));
     ctx.clearRect(0, 0, W, H);
     sky(t, sc, vel, skyA, sp.y);
-    var alive = 0;
+    var alive = 0, tight = 1 - 0.5 * smooth((u - 0.3) / 0.6);
     papers.forEach(function (q) {
+      if (VERSION === 4 && q.keep && hm) {
+        q.th += q.om * dt; q.sr += q.rs * dt; q.sf += q.fs * dt;
+        var r4 = P * (q.r + q.rw * Math.sin(t * q.rf + q.ph)) * tight, h4 = P * (q.h + q.hw * Math.sin(t * q.hf + q.ph)) * tight;
+        var oz = r4 * Math.sin(q.th), ox = cx + r4 * Math.cos(q.th), oy = cy + h4 + oz * 0.12;
+        var kHold = state === 'fall' ? smooth((u - q.peel) / 0.12) : 1, held = heldPos(q.j, hm), aim = held.rot;
+        q.x = lerp(ox, held.x, kHold); q.y = lerp(oy, held.y, kHold); q.z = kHold > 0.5 ? 1 : oz; q.k = kHold > 0.5 ? 1 : null;
+        q.kind = kHold > 0.5 ? cardKind(q.j) : 'cv';
+        if (state !== 'fall') {
+          var kShow = smooth((tp - 0.6) / 0.8), shown = shownPos(q.j, hm, sp);
+          q.x = lerp(held.x, shown.x, kShow); q.y = lerp(held.y, shown.y, kShow); aim = lerp(held.rot, shown.rot, kShow); q.k = lerp(1, 1.25, kShow);
+        }
+        q.rot = lerp(q.sr, Math.round(q.sr / 6.283) * 6.283 + aim, kHold);
+        q.fl = lerp(q.sf, Math.round(q.sf / 6.283) * 6.283, kHold);
+        q.a = 1;
+        return;
+      }
+      if (q.settle) {
+        var k = smooth(tp / 0.7), slot = rowSlot(q.settle.j, sp);
+        q.x = lerp(q.settle.x, slot.x, k); q.y = lerp(q.settle.y, slot.y, k); q.z = 0;
+        q.rot = lerp(q.settle.rot, slot.rot + Math.round(q.settle.rot / 6.283) * 6.283, k);
+        q.fl = lerp(q.settle.fl, Math.round(q.settle.fl / 6.283) * 6.283, k);
+        return;
+      }
       if (!q.free) {
         q.th += q.om * dt;
         var r = P * (q.r + q.rw * Math.sin(t * q.rf + q.ph)), hh = P * (q.h + q.hw * Math.sin(t * q.hf + q.ph));
+        if (q.keep) { r *= tight; hh *= tight; }
         q.x = cx + r * Math.cos(q.th); q.z = r * Math.sin(q.th); q.y = cy + hh + q.z * 0.12;
         q.a = Math.min(1, q.a + dt * 2);
       } else {
         q.vy += P * 6 * dt; q.vx *= 1 - 1.2 * dt;
         q.x += q.vx * dt + Math.sin(t * 3 + q.ph) * P * 0.6 * dt; q.y += q.vy * dt;
-        q.a -= dt * 0.75;
+        q.a -= dt * (q.drop ? 0.9 : 0.75);
       }
       q.rot += q.rs * dt; q.fl += q.fs * dt;
       if (q.a > 0) alive++;
     });
-    // Papers behind the figure first, then the figure, then the papers in front.
+    if (crowd.length) drawCrowd(crowd, u, tp, state !== 'fall');
+    if (hp) figure(hx, hy, 0, hp, 1, hs, true);
     var live = papers.filter(function (q) { return q.a > 0; }).sort(function (a, b) { return a.z - b.z; });
     live.forEach(function (q) { if (q.z < 0) paper(q, 1 + q.z / (P * 6), 0.8 * clamp(q.a)); });
     figure(x, y, rot, p, sq);
-    live.forEach(function (q) { if (q.z >= 0) paper(q, 1 + q.z / (P * 6), clamp(q.a)); });
-    if (state === 'land' && t - landT > 2.4 && alive === 0) { state = 'rest'; rest(); return; }
+    live.forEach(function (q) { if (q.z >= 0) paper(q, q.settle ? 1.15 : (q.k || 1 + q.z / (P * 6)), clamp(q.a)); });
+    var settled = VERSION === 3 ? 3.6 : 2.4;
+    if (state === 'land' && tp > settled && alive === 0) { state = 'rest'; rest(); return; }
     kick();
   }
-  // At rest: the figure stands on the "h".
   function rest() {
     var sp = spot();
     ctx.clearRect(0, 0, W, H);
+    if (VERSION === 3) drawCrowd(crowdSpots(), 1, 9, true);
+    var hel = VERSION === 4 && letters.length ? letterSpot(helperLetter()) : null;
+    if (hel) {
+      letters.concat(words, turnWords).forEach(function (el) { el.style.opacity = '1'; });
+      var s4 = helperSize(), hy4 = hel.y - reach(PRESENT, s4), hm4 = handMid(hel.x, hy4, PRESENT, s4);
+      figure(hel.x, hy4, 0, PRESENT, 1, s4, true);
+      figure(sp.x, sp.y - reach(RECEIVE), -0.12, RECEIVE, 1);
+      [0, 1, 2].forEach(function (j) { var s = shownPos(j, hm4, sp); paper({ x: s.x, y: s.y, rot: s.rot, fl: 0, kind: cardKind(j) }, 1.25, 1); });
+      return;
+    }
     figure(sp.x, sp.y - reach(REST), 0, REST, 1);
+    if (VERSION === 2) [0, 1, 2].forEach(function (j) { var s = rowSlot(j, sp); paper({ x: s.x, y: s.y, rot: s.rot, fl: 0 }, 1.15, 1); });
   }
-
   function start() {
+    if (LINE) { var st = unfurl.querySelector('.statement'); if (st) stage.appendChild(st); }
+    if (VERSION === 4) {
+      var turn = document.querySelector('.count .turn') || document.createElement('p'); turn.className = 'turn'; turn.textContent = '';
+      TURN.replace(/\. /g, '.\n').split('\n').forEach(function (s) { var sp = document.createElement('span'); sp.textContent = s; turn.appendChild(sp); });
+      var acts = unfurl.querySelector('.actions'), small = unfurl.querySelector(':scope > .small');
+      [st, acts, small].forEach(function (el) { if (el) stage.appendChild(el); });
+      if (st) st.className = 'statement hero-line';
+      var say = document.querySelector('#price .say'), nocard = document.querySelector('#price .small');
+      if (say && !/billion/.test(say.textContent)) say.textContent = say.textContent.replace(/\.\s*$/, '') + ' (unless this shit shoveling gets too shitty, then it’ll be a billion dollars).';
+      if (nocard) nocard.parentNode.removeChild(nocard);
+      var hq = Array.prototype.filter.call(document.querySelectorAll('#how h3'), function (h) { return /how.s this work/i.test(h.textContent); })[0];
+      if (hq) hq.parentNode.removeChild(hq);
+      var atForm = /[?&]buddy=form/.test(location.search);
+      var anchor = atForm ? document.getElementById('start-intro') : document.querySelector('#price button');
+      if (anchor) {
+        anchor.parentNode.insertBefore(turn, anchor);
+        var fine = document.createElement('div'), fcv = document.createElement('canvas');
+        fine.className = 'scene'; fcv.setAttribute('aria-hidden', 'true'); fine.appendChild(fcv);
+        turn.parentNode.insertBefore(fine, turn);
+        stories.push({ beat: fine, canvas: fcv, scene: 9, drawn: false });
+      }
+      buildStory([unfurl.querySelector('.lede')], BEATS, 0);
+      var voice = document.querySelector('.voice');
+      if (voice) buildStory(Array.prototype.slice.call(voice.querySelectorAll(':scope > p')), VOICE_BEATS, 5, 'flip');
+      var fig = unfurl.querySelector('figure');
+      var wk2 = Array.prototype.filter.call(document.querySelectorAll('.entries .card'), function (c) { return /week 2/i.test(c.textContent); })[0];
+      if (fig && wk2) wk2.appendChild(fig);
+      wrapLetters(); if (st && intro) wrapWords(st);
+      if (intro && window.scrollY < 10) letters.slice(1).concat(words).forEach(function (el) { el.style.opacity = String(FAINT); });
+    }
     readColors(); size();
     if (intro) {
       var sp = spot();
@@ -607,7 +1139,6 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
         if (state === 'rest' && Math.min(window.scrollY, D) >= 0.96 * D * FALL) return;
         kick();
       }, { passive: true });
-      // The rest of the hero unrolls once it scrolls into view.
       if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (entries) {
           if (!entries.some(function (e) { return e.isIntersecting; })) return;
@@ -619,11 +1150,10 @@ html.fall-intro:not(.fall-ready) .unfurl { animation: unfurl-failsafe 0.01s 6s f
       } else unfurl.classList.add('open', 'done');
       kick();
     } else rest();
+    if (VERSION === 4) showBeats();
     html.classList.add('fall-ready');
     window.addEventListener('resize', function () { size(); if (!intro || state === 'rest') rest(); else kick(); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { gap = null; if (!intro || state === 'rest') rest(); });
-    var dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)');
-    if (dark && dark.addEventListener) dark.addEventListener('change', function () { readColors(); if (clouds.length) makeClouds(); if (!intro || state === 'rest') rest(); });
   }
   try { start(); } catch (e) { html.classList.remove('fall-intro'); }
 })();
