@@ -241,7 +241,6 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     <div class="unfurl" id="unfurl">
       <p class="statement">The AI arms race has left the job seeker behind.</p>
       <p class="lede">There are a million and one services, prompts, and commiserations that come your way, and it’s all so draining. For the cost of what used to be a decent co-pay, I’ll take on your burden of dealing with dead web pages, shady ghost jobs, and also be your human AI wrangler, because we all know that shit gets tired fast.</p>
-      <p class="small">Free to start. I take a few people at a time.</p>
     </div>
   </section>
 
@@ -1100,8 +1099,8 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
       var turn = document.querySelector('.count .turn') || document.createElement('p'); turn.className = 'turn'; turn.textContent = '';
       TURN.replace(/\. /g, '.\n').split('\n').forEach(function (s) { var sp = document.createElement('span'); sp.textContent = s; turn.appendChild(sp); });
       var acts = unfurl.querySelector('.actions'), small = unfurl.querySelector(':scope > .small');
-      if (acts) acts.parentNode.removeChild(acts);
-      [st, small].forEach(function (el) { if (el) stage.appendChild(el); });
+      [acts, small].forEach(function (el) { if (el) el.parentNode.removeChild(el); });
+      if (st) stage.appendChild(st);
       if (st) st.className = 'statement hero-line';
       var say = document.querySelector('#price .say'), nocard = document.querySelector('#price .small');
       if (say && !/billion/.test(say.textContent)) say.textContent = say.textContent.replace(/\.\s*$/, '') + ' (unless this shit shoveling gets too shitty, then it’ll be a billion dollars).';
