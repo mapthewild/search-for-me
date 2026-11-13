@@ -209,12 +209,36 @@ html.fall-intro.v4 .unfurl.open > :nth-child(2) { transition-delay: .25s; }
 html.fall-intro.v4 .unfurl.open > :nth-child(3) { transition-delay: .5s; }
 html.fall-intro.v4 .unfurl.open > :nth-child(4) { transition-delay: .75s; }
 html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
+.bar .brand { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+.bar .brand svg { display: block; height: 20px; width: auto; }
+.bar .brand-name { font-family: 'Dela Gothic One', var(--font); font-size: 17px; line-height: 1; letter-spacing: 0.06em; }
+html.js.v5:not(.fall-intro) .stage { padding-top: clamp(330px, 42vw, 540px); }
+html.v5 .story .beat.center, html.v5 .story.flip .beat.center { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 12px; }
+html.v5 .story .beat.center canvas, html.v5 .story.flip .beat.center canvas { order: 0; width: min(480px, 100%); height: auto; aspect-ratio: 480 / 230; }
+html.v5 .beat.center p { font-size: 30px; line-height: 36px; font-weight: 600; }
+html.v5 .fees5 { width: 100%; max-width: 760px; display: grid; gap: 26px; justify-items: center; text-align: center; }
+html.v5 .fees5 h3 { font-size: 20px; line-height: 28px; }
+html.v5 .fee-grid { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 20px; }
+html.v5 .fee { margin: 0; display: grid; gap: 6px; justify-items: center; align-content: start; }
+html.v5 .fee canvas { width: 100%; max-width: 220px; height: auto; aspect-ratio: 200 / 140; }
+html.v5 .fee figcaption { font-size: 13px; line-height: 19px; color: var(--text); max-width: 200px; }
+html.v5 .fee figcaption b { display: block; font-size: 14px; color: var(--ink); }
+@media (max-width: 600px) { html.v5 .fee-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; } }
+html.fall-intro.v5 .fee, html.fall-intro.v5 .price-row { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+html.fall-intro.v5 .fee.in, html.fall-intro.v5 .price-row.in { opacity: 1; transform: none; }
+html.v5 .price-row { display: grid; gap: 14px; justify-items: center; }
+html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink); max-width: 420px; text-align: center; }
+@media (min-width: 900px) {
+  html.v5 #price { max-width: 760px; }
+  html.v5 .price-row { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 36px; justify-items: start; }
+  html.v5 .price-row .why { text-align: left; font-size: 19px; line-height: 30px; }
+}
 </style>
 <script>
   // Before the first paint: pin the first screen for the fall, unless the visitor asked for less motion.
   document.documentElement.classList.add('js');
   if (!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) document.documentElement.classList.add('fall-intro');
-  var v = (location.search.match(/[?&]v=(\d)/) || [])[1] || '4'; if (v) document.documentElement.classList.add('v' + v);
+  var v = (location.search.match(/[?&]v=(\d)/) || [])[1] || '5'; if (v) { document.documentElement.classList.add('v' + v); if (v === '5') document.documentElement.classList.add('v4'); }
 </script>
 </head>
 <body>
@@ -380,9 +404,10 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
 <script>
 (function () {
   var html = document.documentElement;
-  var VERSION = Number((location.search.match(/[?&]v=(\d)/) || [])[1] || 4);
-  var LINE = VERSION === 1 || VERSION === 4, KEEP3 = VERSION === 2 || VERSION === 4;
-  var CARDS = VERSION === 4 ? ((location.search.match(/[?&]cards=(\w+)/) || [])[1] || (/[?&]faces=0/.test(location.search) ? 'cvs' : 'signals')) : 'cvs';
+  var VERSION = Number((location.search.match(/[?&]v=(\d)/) || [])[1] || 5);
+  var V4 = VERSION === 4 || VERSION === 5, V5 = VERSION === 5;
+  var LINE = VERSION === 1 || V4, KEEP3 = VERSION === 2 || V4;
+  var CARDS = V4 ? ((location.search.match(/[?&]cards=(\w+)/) || [])[1] || (/[?&]faces=0/.test(location.search) ? 'cvs' : 'signals')) : 'cvs';
   function cardKind(j) { return CARDS === 'signals' ? ['person', 'message', 'spark'][j] : CARDS === 'faces' ? 'person' : 'cv'; }
   var drop = document.getElementById('drop');
   var stage = document.getElementById('stage');
@@ -402,7 +427,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
   function smooth(t) { t = clamp(t); return t * t * (3 - 2 * t); }
   function readColors() {
     var cs = getComputedStyle(html);
-    ['ink', 'panel', 'line', 'text', 'tint'].forEach(function (k) { col[k] = cs.getPropertyValue('--' + k).trim(); });
+    ['ink', 'panel', 'line', 'text', 'tint', 'accent'].forEach(function (k) { col[k] = cs.getPropertyValue('--' + k).trim(); });
   }
   function size() {
     html.style.setProperty('--stage-top', Math.round(drop.getBoundingClientRect().top + window.scrollY) + 'px');
@@ -422,8 +447,11 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
       var m = mctx.measureText('h');
       gap = m.fontBoundingBoxAscent && m.actualBoundingBoxAscent ? (m.fontBoundingBoxAscent - m.actualBoundingBoxAscent) / fs : 0.2;
     }
-    S = Math.max(VERSION === 4 ? 66 : 60, Math.min(130, fs * 0.56)); P = Math.max(S, 64);
-    return { x: rr.left - cr.left + fs * 0.11, y: rr.top - cr.top + gap * fs };
+    S = Math.max(V4 ? 66 : 60, Math.min(130, fs * 0.56));
+    var sy = rr.top - cr.top + gap * fs;
+    if (V5) S = Math.max(46, Math.min(S, (sy - 60) / 5));
+    P = Math.max(S, 64);
+    return { x: rr.left - cr.left + fs * 0.11, y: sy };
   }
   function helperLetter() { return S > 80 ? 3 : 2; }
   var letters = [], words = [], turnWords = [], FAINT = 0.18;
@@ -459,6 +487,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
   }
   var BEATS = [' For the cost of', ' of dealing with', ' and also be your', ' because we all know'];
   var VOICE_BEATS = [' long enough for you', ' Every time you want'];
+  var VOICE_BEATS5 = [' long enough for you', ' yes you!', ' Every time you want'];
   var stories = [];
   function buildStory(els, cuts, first, cls) {
     els = els.filter(Boolean);
@@ -474,16 +503,18 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     var story = document.createElement('div'); story.className = 'story' + (cls ? ' ' + cls : '');
     parts.forEach(function (words4, i) {
       var beat = document.createElement('div'); beat.className = 'beat';
+      var sc = Array.isArray(first) ? first[i] : first + i, wide = sc === sceneYes5;
+      if (wide) beat.className += ' center';
       var cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
       var p4 = document.createElement('p'); p4.textContent = words4;
       beat.appendChild(cv); beat.appendChild(p4); story.appendChild(beat);
-      stories.push({ beat: beat, canvas: cv, scene: first + i, drawn: false });
+      stories.push({ beat: beat, canvas: cv, scene: sc, drawn: false, w: wide ? 480 : 0, h: wide ? 230 : 0 });
     });
     els[0].parentNode.insertBefore(story, els[0]);
     els.forEach(function (el) { el.parentNode.removeChild(el); });
   }
   function showBeats() {
-    var show = function (s) { if (s.drawn) return; s.drawn = true; s.beat.classList.add('in'); drawScene(s.canvas, s.scene); };
+    var show = function (s) { if (s.drawn) return; s.drawn = true; s.beat.classList.add('in'); if (s.canvas) drawScene(s.canvas, s.scene, s.w, s.h); };
     if (!intro || !('IntersectionObserver' in window)) { stories.forEach(show); return; }
     var io4 = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { if (e.isIntersecting) stories.forEach(function (s) { if (s.beat === e.target) show(s); }); });
@@ -491,13 +522,14 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     stories.forEach(function (s) { io4.observe(s.beat); });
   }
   var SW = 240, SH = 170;
-  function drawScene(cv, i) {
+  function drawScene(cv, i, w, h) {
     var keep = { ctx: ctx, S: S, P: P }, g = cv.getContext('2d');
     if (!g) return;
-    cv.width = Math.round(SW * dpr); cv.height = Math.round(SH * dpr);
-    ctx = g; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, SW, SH);
+    w = w || SW; h = h || SH;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx = g; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
     S = 70; P = 70;
-    try { [sceneDrained, sceneBurden, sceneGhosts, sceneWrangler, sceneTired, sceneDam, sceneReach, sceneShovel, sceneBlame, sceneFine][i](); }
+    try { (typeof i === 'function' ? i : [sceneDrained, sceneBurden, sceneGhosts, sceneWrangler, sceneTired, sceneDam, sceneReach, sceneShovel, sceneBlame, sceneFine][i])(); }
     finally { ctx = keep.ctx; S = keep.S; P = keep.P; }
   }
   function pen(w) { ctx.strokeStyle = col.ink; ctx.fillStyle = col.ink; ctx.lineWidth = w || Math.max(2, S * 0.045); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }
@@ -635,7 +667,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-10, -8); ctx.lineTo(-5, 0); ctx.lineTo(-10, 7); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-5, 0); ctx.stroke();
     ctx.restore();
-    ctx.fillStyle = col.ink; ctx.font = '700 22px ' + getComputedStyle(wordmark).fontFamily; ctx.fillText('!', fx - 3, fy - 50);
+    if (!V5) { ctx.fillStyle = col.ink; ctx.font = '700 22px ' + getComputedStyle(wordmark).fontFamily; ctx.fillText('!', fx - 3, fy - 50); }
   }
   function sceneShovel() {
     var gy = 152; ground(gy);
@@ -699,6 +731,286 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     ctx.beginPath(); ctx.moveTo(95, 74); ctx.lineTo(100, 88); ctx.lineTo(106, 74); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.fillStyle = col.panel; ctx.fillRect(96, 71, 9, 3);
     ctx.fillStyle = col.ink; ctx.fillText(said, bx + 9, 67);
+  }
+  function hr5(i) { var s = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); }
+  function ground5(y, x0, x1) { pen(1.5); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.globalAlpha = 1; }
+  function star5(x, y, r) {
+    ctx.beginPath();
+    for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4 - Math.PI / 2, rr = i % 2 ? r * 0.3 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fill();
+  }
+  function streamer5(x, y0, len, ph, c) {
+    ctx.save(); ctx.strokeStyle = c; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    for (var d = 0; d <= len; d += 3) { var xx = x + Math.sin(ph + d * 0.11) * 6; if (d === 0) ctx.moveTo(xx, y0 + d); else ctx.lineTo(xx, y0 + d); }
+    ctx.stroke();
+    var ex = x + Math.sin(ph + len * 0.11) * 6, ey = y0 + len;
+    ctx.beginPath(); ctx.arc(ex + 3, ey, 3, Math.PI, Math.PI * 2.6); ctx.stroke();
+    ctx.restore();
+  }
+  function shako5(x, y, s) {
+    var hr = s * 0.12, hy = y - s * 0.36 - hr - s * 0.012, b = hy - hr * 0.5, tp = b - s * 0.2;
+    ctx.save(); ctx.fillStyle = col.ink; ctx.strokeStyle = col.ink; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x - hr * 0.95, b); ctx.lineTo(x - hr * 0.8, tp); ctx.lineTo(x + hr * 0.8, tp); ctx.lineTo(x + hr * 0.95, b); ctx.closePath(); ctx.fill();
+    ctx.lineWidth = Math.max(1.6, s * 0.03); ctx.beginPath(); ctx.moveTo(x - hr * 1.2, b + 1); ctx.lineTo(x + hr * 1.2, b + 1); ctx.stroke();
+    ctx.strokeStyle = col.accent; ctx.lineWidth = Math.max(2.5, s * 0.06);
+    ctx.beginPath(); ctx.moveTo(x, tp); ctx.quadraticCurveTo(x + hr * 0.3, tp - s * 0.12, x - hr * 0.6, tp - s * 0.17); ctx.stroke();
+    ctx.restore();
+  }
+  function note5(x, y, k) {
+    ctx.save(); ctx.fillStyle = col.ink; ctx.strokeStyle = col.ink; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.ellipse(x, y, 4 * k, 3 * k, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x + 3.6 * k, y - k); ctx.lineTo(x + 3.6 * k, y - 15 * k); ctx.quadraticCurveTo(x + 8 * k, y - 11 * k, x + 9 * k, y - 6 * k); ctx.stroke();
+    ctx.restore();
+  }
+  function sceneYes5() {
+    var H5 = 230, gy = 202, panels = [[6, 138], [148, 332], [342, 474]];
+    panels.forEach(function (pn, k) {
+      ctx.save(); rrect(pn[0], 6, pn[1] - pn[0], H5 - 12, 10); ctx.clip();
+      if (k === 1) {
+        ctx.fillStyle = col.ink; ctx.globalAlpha = 0.08;
+        ctx.beginPath(); ctx.moveTo(220, 6); ctx.lineTo(260, 6); ctx.lineTo(304, gy + 4); ctx.lineTo(176, gy + 4); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 0.14; ctx.beginPath(); ctx.ellipse(240, gy + 1, 58, 7, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      var n = k === 1 ? 6 : 4;
+      for (var i = 0; i < n; i++) {
+        var r1 = hr5(k * 31 + i * 7 + 1), r2 = hr5(k * 17 + i * 13 + 2);
+        var sx = lerp(pn[0] + 10, pn[1] - 10, (i + 0.25 + 0.5 * r1) / n), len = (k === 1 ? 30 : 36) + (k === 1 ? 50 : 66) * r2;
+        streamer5(sx, 4, len, r1 * 6.28, i % 2 ? col.accent : col.ink);
+      }
+      for (var j = 0; j < (k === 1 ? 18 : 10); j++) {
+        var cx5 = lerp(pn[0] + 6, pn[1] - 6, hr5(k * 53 + j * 3 + 5)), cy5 = 16 + (gy - 36) * hr5(k * 71 + j * 5 + 9);
+        if (k === 1 && Math.abs(cx5 - 240) < 46 && cy5 > 92) continue;
+        ctx.save(); ctx.translate(cx5, cy5); ctx.rotate(hr5(j * 11 + k) * 6.28);
+        ctx.fillStyle = j % 3 === 0 ? col.accent : col.ink; ctx.globalAlpha = j % 3 === 0 ? 0.95 : 0.5;
+        ctx.fillRect(-1.6, -3.6, 3.2, 7.2); ctx.restore();
+      }
+      ctx.restore();
+      ground5(gy, pn[0] + 10, pn[1] - 10);
+    });
+    var s = 80, x = 240, POINT5 = { la: -1.85, ra: 1.5, le: 0.55, re: 1.64, lh: -0.18, rh: 0.18, lk: 0, rk: 0, o: 0.9 };
+    var y = gy - reach(POINT5, s);
+    figure(x, y, 0, POINT5, 1, s);
+    var h = handOf(x, y, POINT5, s, 'r'), hcY = y - s * 0.36 - s * 0.12 - s * 0.012;
+    var dx = x - h.x, dy = hcY - h.y, dl = Math.sqrt(dx * dx + dy * dy) || 1;
+    pen(Math.max(2, s * 0.04)); ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(h.x + dx / dl * s * 0.06, h.y + dy / dl * s * 0.06); ctx.stroke();
+    ctx.beginPath(); ctx.arc(h.x, h.y, s * 0.028, 0, Math.PI * 2); ctx.fill();
+    var bs = 58;
+    var DRUM5 = { la: -2.3, ra: 2.3, le: 0.5, re: 0.5, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0 }, dxm = 42, dym = gy - reach(DRUM5, bs);
+    figure(dxm, dym, 0, DRUM5, 1, bs); shako5(dxm, dym, bs);
+    ['l', 'r'].forEach(function (sd) {
+      var hh = handOf(dxm, dym, DRUM5, bs, sd), a = sd === 'r' ? DRUM5.ra + DRUM5.re : DRUM5.la - DRUM5.le;
+      var ex = hh.x + Math.sin(a) * bs * 0.24, ey = hh.y + Math.cos(a) * bs * 0.24;
+      pen(1.8); ctx.beginPath(); ctx.moveTo(hh.x, hh.y); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI * 2); ctx.fill();
+    });
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.arc(dxm, dym - bs * 0.19, bs * 0.18, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(dxm, dym - bs * 0.19, bs * 0.12, 0, Math.PI * 2); ctx.stroke();
+    var TRUMP5 = { la: 1.4, ra: 2.0, le: -1.2, re: 0.4, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0.35 }, tx = 98, ty = gy - reach(TRUMP5, bs);
+    figure(tx, ty, 0, TRUMP5, 1, bs); shako5(tx, ty, bs);
+    var mx0 = tx + bs * 0.12, my0 = ty - bs * 0.45, mx1 = tx + bs * 0.42, my1 = ty - bs * 0.57;
+    pen(2.2); ctx.beginPath(); ctx.moveTo(mx0, my0); ctx.lineTo(mx1, my1); ctx.stroke();
+    var ux = (mx1 - mx0), uy = (my1 - my0), ul = Math.sqrt(ux * ux + uy * uy); ux /= ul; uy /= ul;
+    pen(1.6); ctx.beginPath();
+    [0.35, 0.5, 0.65].forEach(function (f) { var vx = lerp(mx0, mx1, f), vy = lerp(my0, my1, f); ctx.moveTo(vx, vy); ctx.lineTo(vx + uy * 4, vy - ux * 4); });
+    ctx.stroke();
+    ctx.fillStyle = col.panel; ctx.beginPath();
+    ctx.moveTo(mx1 - ux * 2 - uy * 2, my1 - uy * 2 + ux * 2); ctx.lineTo(mx1 + ux * 9 - uy * 7, my1 + uy * 9 + ux * 7);
+    ctx.lineTo(mx1 + ux * 9 + uy * 7, my1 + uy * 9 - ux * 7); ctx.lineTo(mx1 - ux * 2 + uy * 2, my1 - uy * 2 - ux * 2); ctx.closePath(); ctx.fill(); ctx.stroke();
+    note5(126, 70, 1); note5(110, 44, 0.85); note5(64, 40, 0.8);
+    var TUBA5 = { la: -0.9, ra: 0.5, le: -1.6, re: 1.9, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0.35 }, ux5 = 384, uy5 = gy - reach(TUBA5, bs);
+    figure(ux5, uy5, 0, TUBA5, 1, bs); shako5(ux5, uy5, bs);
+    pen(4); ctx.beginPath();
+    ctx.moveTo(ux5 - bs * 0.16, uy5 - bs * 0.62); ctx.bezierCurveTo(ux5 + bs * 0.28, uy5 - bs * 0.5, ux5 + bs * 0.24, uy5 - bs * 0.04, ux5 - bs * 0.02, uy5 - bs * 0.08);
+    ctx.stroke();
+    pen(1.6); ctx.fillStyle = col.panel;
+    var bx5 = ux5 - bs * 0.24, by5 = uy5 - bs * 0.78, br = bs * 0.19;
+    ctx.beginPath(); ctx.arc(bx5, by5, br, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(bx5, by5, br * 0.62, 0, Math.PI * 2); ctx.stroke();
+    var CYM5 = { la: -2.0, ra: 2.0, le: 0.2, re: 0.2, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0 }, kx = 440, ky = gy - reach(CYM5, bs);
+    figure(kx, ky, 0, CYM5, 1, bs); shako5(kx, ky, bs);
+    [['l', -1], ['r', 1]].forEach(function (c) {
+      var hh = handOf(kx, ky, CYM5, bs, c[0]);
+      pen(1.6); ctx.fillStyle = col.panel;
+      ctx.beginPath(); ctx.ellipse(hh.x + c[1] * 2, hh.y, bs * 0.045, bs * 0.15, c[1] * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      [-0.5, 0, 0.5].forEach(function (a) { var ox = hh.x + c[1] * 7, oy = hh.y + a * 10; ctx.moveTo(ox, oy); ctx.lineTo(ox + c[1] * 7, oy + a * 6); });
+      ctx.stroke();
+    });
+    note5(356, 56, 0.85); note5(372, 36, 0.8);
+    pen(1.6); ctx.globalAlpha = 0.9;
+    panels.forEach(function (pn) { rrect(pn[0], 6, pn[1] - pn[0], H5 - 12, 10); ctx.stroke(); });
+    ctx.globalAlpha = 1;
+  }
+  var PAY5 = { la: -0.3, ra: 1.45, le: 0.1, re: 0.35, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.6 };
+  var SHRUG5 = { la: -0.9, ra: 0.9, le: 1.3, re: 1.3, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.4 };
+  function dollar5(x, y, sz, a, c) {
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = c || col.ink; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '700 ' + sz + 'px ' + getComputedStyle(wordmark).fontFamily; ctx.fillText('$', x, y); ctx.restore();
+  }
+  function payArc5(x0, y0, x1, y1, n, lift) {
+    var mx = (x0 + x1) / 2, my = Math.min(y0, y1) - lift;
+    ctx.save(); pen(1.3); ctx.setLineDash([2, 4]); ctx.globalAlpha = 0.45;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke(); ctx.restore();
+    for (var i = 0; i < n; i++) {
+      var k = (i + 1) / (n + 1), ax = lerp(lerp(x0, mx, k), lerp(mx, x1, k), k), ay = lerp(lerp(y0, my, k), lerp(my, y1, k), k);
+      dollar5(ax, ay - 2, 14, 0.9);
+    }
+  }
+  function tie5(x, y, s) {
+    var ny = y - s * 0.32;
+    ctx.save(); ctx.fillStyle = col.ink; ctx.beginPath();
+    ctx.moveTo(x - s * 0.025, ny); ctx.lineTo(x + s * 0.025, ny); ctx.lineTo(x + s * 0.04, ny + s * 0.12); ctx.lineTo(x, ny + s * 0.16); ctx.lineTo(x - s * 0.04, ny + s * 0.12);
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function house5(x0, w, gy, ht, roof) {
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.fillRect(x0, gy - ht, w, ht); ctx.strokeRect(x0, gy - ht, w, ht);
+    ctx.beginPath(); ctx.moveTo(x0 - 6, gy - ht + 2); ctx.lineTo(x0 + w / 2, gy - ht - roof); ctx.lineTo(x0 + w + 6, gy - ht + 2); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  function feeDelivery() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    var px = 40, py = gy - reach(PAY5, ms); figure(px, py, 0, PAY5, 1, ms);
+    var h = handOf(px, py, PAY5, ms, 'r');
+    pen(1.5); ctx.fillStyle = col.panel; rrect(h.x - 3, h.y - 22, 16, 26, 3); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = col.ink; [0, 1, 2, 3].forEach(function (i) { ctx.fillRect(h.x, h.y - 17 + i * 5, i === 3 ? 6 : 10, 1.8); });
+    var RIDE5 = { la: -1.35, ra: 0.25, le: 0.15, re: 0.1, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0 }, rx = 150, ry = gy - reach(RIDE5, ms);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.fillRect(rx + 2, ry - 40, 30, 30); ctx.strokeRect(rx + 2, ry - 40, 30, 30);
+    ctx.beginPath(); ctx.moveTo(rx + 2, ry - 30); ctx.lineTo(rx + 32, ry - 30); ctx.stroke();
+    figure(rx, ry, 0, RIDE5, 1, ms);
+    var bh = handOf(rx, ry, RIDE5, ms, 'l');
+    pen(1.5); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(bh.x - 7, bh.y + 3); ctx.lineTo(bh.x - 9, bh.y + 19); ctx.lineTo(bh.x + 7, bh.y + 19); ctx.lineTo(bh.x + 5, bh.y + 3); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(bh.x - 1, bh.y + 3, 4, Math.PI, 0); ctx.stroke();
+    payArc5(h.x + 6, h.y - 26, rx + 17, ry - 44, 3, 22);
+  }
+  function feeHouse() {
+    var gy = 126; ground5(gy, 10, 190);
+    house5(18, 58, gy, 42, 30);
+    ctx.strokeRect(40, gy - 22, 13, 22); ctx.strokeRect(24, gy - 34, 11, 10); ctx.strokeRect(59, gy - 34, 11, 10);
+    pen(1.8); ctx.beginPath(); ctx.moveTo(92, gy); ctx.lineTo(92, gy - 56); ctx.lineTo(120, gy - 56); ctx.stroke();
+    pen(1.2); ctx.beginPath(); ctx.moveTo(99, gy - 56); ctx.lineTo(99, gy - 50); ctx.moveTo(115, gy - 56); ctx.lineTo(115, gy - 50); ctx.stroke();
+    pen(1.5); ctx.fillStyle = col.panel; ctx.fillRect(95, gy - 50, 24, 14); ctx.strokeRect(95, gy - 50, 24, 14);
+    ctx.fillStyle = col.ink; ctx.font = '700 8px ' + getComputedStyle(wordmark).fontFamily; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('SOLD', 107, gy - 42.5); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    var CARRY5 = { la: -0.35, ra: 0.3, le: -0.3, re: 2.74, lh: -0.3, rh: 0.3, lk: 0.3, rk: 0.1, o: 0 }, ms = 54, mx = 146;
+    var my = gy - reach(CARRY5, ms), hand = handOf(mx, my, CARRY5, ms, 'r'), nx = hand.x + 1, ny = hand.y - 2;
+    pen(1.8); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(nx, ny); ctx.bezierCurveTo(nx + 30, ny - 6, nx + 40, ny + 30, nx + 20, ny + 36); ctx.bezierCurveTo(nx + 4, ny + 40, nx - 4, ny + 20, nx, ny);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    dollar5(nx + 19, ny + 20, 15, 1);
+    figure(mx, my, 0, CARRY5, 1, ms); tie5(mx, my, ms);
+    payArc5(52, gy - 26, nx + 10, ny - 6, 2, 16);
+  }
+  function ticket5(x, y, w, ht, rot, mark) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); pen(1.5); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(-w / 2, -ht / 2); ctx.lineTo(w / 2, -ht / 2); ctx.arc(w / 2, 0, ht * 0.22, -Math.PI / 2, Math.PI / 2, true);
+    ctx.lineTo(w / 2, ht / 2); ctx.lineTo(-w / 2, ht / 2); ctx.arc(-w / 2, 0, ht * 0.22, Math.PI / 2, -Math.PI / 2, true); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(w * 0.22, -ht / 2 + 2); ctx.lineTo(w * 0.22, ht / 2 - 2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = col.ink;
+    if (mark === 'star') star5(-w * 0.12, 0, ht * 0.3);
+    else { ctx.font = '700 ' + Math.round(ht * 0.7) + 'px ' + getComputedStyle(wordmark).fontFamily; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(mark, -w * 0.12, 1); }
+    ctx.restore();
+  }
+  function feeTickets() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    var HOLDUP = { la: -0.3, ra: 2.2, le: 0.1, re: 0.5, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.6 };
+    var px = 38, py = gy - reach(HOLDUP, ms); figure(px, py, 0, HOLDUP, 1, ms);
+    var h = handOf(px, py, HOLDUP, ms, 'r');
+    var spots = [[h.x + 26, h.y - 6, 46, 24, -0.15], [h.x + 50, h.y + 20, 32, 16, 0.3], [h.x + 74, h.y + 38, 32, 16, 0.5], [h.x + 100, gy - 9, 32, 16, 0.08]];
+    pen(1.3); ctx.globalAlpha = 0.6; ctx.beginPath();
+    for (var i = 1; i < spots.length; i++) { ctx.moveTo(spots[i - 1][0] + 8, spots[i - 1][1] + 6); ctx.lineTo(spots[i][0] - 8, spots[i][1] - 4); }
+    ctx.stroke(); ctx.globalAlpha = 1;
+    spots.slice(1).forEach(function (q) { ticket5(q[0], q[1], q[2], q[3], q[4], '+'); });
+    ticket5(spots[0][0], spots[0][1], spots[0][2], spots[0][3], spots[0][4], 'star');
+  }
+  function feeBank() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    var x0 = 100, x1 = 186;
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.fillRect(x0 - 4, gy - 8, x1 - x0 + 8, 8); ctx.strokeRect(x0 - 4, gy - 8, x1 - x0 + 8, 8);
+    ctx.fillRect(x0, gy - 14, x1 - x0, 6); ctx.strokeRect(x0, gy - 14, x1 - x0, 6);
+    for (var c = 0; c < 4; c++) { var cx5 = x0 + 12 + c * 21; ctx.fillRect(cx5 - 4, gy - 56, 8, 42); ctx.strokeRect(cx5 - 4, gy - 56, 8, 42); }
+    ctx.fillRect(x0, gy - 62, x1 - x0, 6); ctx.strokeRect(x0, gy - 62, x1 - x0, 6);
+    ctx.beginPath(); ctx.moveTo(x0 - 4, gy - 62); ctx.lineTo((x0 + x1) / 2, gy - 86); ctx.lineTo(x1 + 4, gy - 62); ctx.closePath(); ctx.fill(); ctx.stroke();
+    dollar5((x0 + x1) / 2, gy - 70, 13, 1);
+    var px = 44, py = gy - reach(SHRUG5, ms); figure(px, py, 0, SHRUG5, 1, ms);
+    pen(1.3); ctx.fillStyle = col.panel;
+    [-1, 1].forEach(function (d) { ctx.beginPath(); ctx.moveTo(px + d * 3, py - 5); ctx.lineTo(px + d * 12, py - 4); ctx.lineTo(px + d * 9, py + 7); ctx.closePath(); ctx.fill(); ctx.stroke(); });
+    ctx.globalAlpha = 0.7; ctx.beginPath();
+    ctx.ellipse(px - 20, py - 16, 3.5, 2, -0.6, 0, Math.PI * 2); ctx.moveTo(px - 13.5, py - 16); ctx.ellipse(px - 16, py - 16, 2.5, 3.5, 0.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+    payArc5(px + 12, py - 28, x0 + 4, gy - 42, 2, 22);
+  }
+  function feeRental() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    house5(112, 62, gy, 42, 28);
+    ctx.strokeRect(138, gy - 24, 13, 24); ctx.strokeRect(157, gy - 34, 11, 10);
+    pen(1.8); ctx.beginPath(); ctx.moveTo(119, gy - 48); ctx.lineTo(126, gy - 13); ctx.stroke();
+    pen(1.4); ctx.fillStyle = col.panel; ctx.beginPath(); ctx.moveTo(121, gy - 14); ctx.lineTo(131, gy - 14); ctx.lineTo(135, gy); ctx.lineTo(117, gy); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(123, gy - 10); ctx.lineTo(121, gy - 1); ctx.moveTo(126, gy - 10); ctx.lineTo(126, gy - 1); ctx.moveTo(129, gy - 10); ctx.lineTo(131, gy - 1); ctx.stroke();
+    var ROLL5 = { la: -0.3, ra: 1.0, le: 0.1, re: 0.5, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.6 };
+    var px = 38, py = gy - reach(ROLL5, ms); figure(px, py, 0, ROLL5, 1, ms);
+    var h = handOf(px, py, ROLL5, ms, 'r');
+    var cx0 = h.x + 2, ct = h.y + 8;
+    pen(1.5); ctx.beginPath();
+    ctx.moveTo(h.x, h.y); ctx.lineTo(h.x + 11, h.y); ctx.moveTo(h.x + 3, h.y); ctx.lineTo(h.x + 3, ct); ctx.moveTo(h.x + 11, h.y); ctx.lineTo(h.x + 11, ct); ctx.stroke();
+    ctx.fillStyle = col.panel; rrect(cx0 - 2, ct, 18, gy - 5 - ct, 3); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx0 + 2, ct + 5); ctx.lineTo(cx0 + 2, gy - 9); ctx.moveTo(cx0 + 12, ct + 5); ctx.lineTo(cx0 + 12, gy - 9); ctx.stroke();
+    ctx.fillStyle = col.ink; ctx.beginPath(); ctx.arc(cx0 + 2, gy - 2.6, 2.4, 0, Math.PI * 2); ctx.arc(cx0 + 12, gy - 2.6, 2.4, 0, Math.PI * 2); ctx.fill();
+    payArc5(px + 10, py - 30, 143, gy - 74, 2, 18);
+  }
+  function feeCar() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    pen(1.6); ctx.fillStyle = col.panel;
+    ctx.beginPath(); ctx.moveTo(102, gy - 12); ctx.lineTo(102, gy - 27); ctx.quadraticCurveTo(104, gy - 32, 114, gy - 33); ctx.lineTo(124, gy - 33);
+    ctx.lineTo(134, gy - 48); ctx.lineTo(164, gy - 48); ctx.lineTo(176, gy - 33); ctx.quadraticCurveTo(190, gy - 32, 190, gy - 23); ctx.lineTo(190, gy - 12); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(129, gy - 34); ctx.lineTo(137, gy - 45); ctx.lineTo(148, gy - 45); ctx.lineTo(148, gy - 34); ctx.closePath();
+    ctx.moveTo(152, gy - 34); ctx.lineTo(152, gy - 45); ctx.lineTo(162, gy - 45); ctx.lineTo(171, gy - 34); ctx.closePath(); ctx.stroke();
+    [118, 172].forEach(function (wx) { ctx.beginPath(); ctx.arc(wx, gy - 9, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.arc(wx, gy - 9, 2.5, 0, Math.PI * 2); ctx.fillStyle = col.ink; ctx.fill(); ctx.fillStyle = col.panel; });
+    pen(1.2);
+    for (var i = 0; i < 8; i++) { ctx.fillStyle = col.panel; ctx.fillRect(62 + (i % 2) * 2, gy - 6 - i * 6, 26, 6); ctx.strokeRect(62 + (i % 2) * 2, gy - 6 - i * 6, 26, 6); }
+    var SIGN5 = { la: -0.3, ra: 1.75, le: 0.1, re: 0.2, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.6 };
+    var px = 34, py = gy - reach(SIGN5, ms); figure(px, py, 0, SIGN5, 1, ms);
+    var h = handOf(px, py, SIGN5, ms, 'r');
+    pen(1.8); ctx.beginPath(); ctx.moveTo(h.x - 2, h.y + 2); ctx.lineTo(h.x + 8, h.y - 6); ctx.stroke();
+    payArc5(px + 8, py - 34, 150, gy - 56, 2, 16);
+  }
+  var FEES5 = [
+    { draw: feeDelivery, name: 'Food delivery', fees: 'Service fee. Delivery fee. Small order fee.' },
+    { draw: feeHouse, name: 'Selling a house', fees: 'The agents’ commission.' },
+    { draw: feeTickets, name: 'Concert tickets', fees: 'Service fee. Facility charge. Order processing fee.' },
+    { draw: feeBank, name: 'The bank', fees: 'Overdraft fee.' },
+    { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.' },
+    { draw: feeCar, name: 'A new car', fees: 'Doc fee.' }
+  ];
+  function price5() {
+    var cost = Array.prototype.filter.call(document.querySelectorAll('#how article'), function (a) { return /costs money/i.test(a.textContent); })[0];
+    var price = document.getElementById('price'), n = price && price.querySelector('.n');
+    if (!cost || !n) return;
+    var q = cost.querySelector('h3'), ans = cost.querySelector('p');
+    if (!q || !ans) return;
+    var box = document.createElement('section'); box.className = 'fees5';
+    box.appendChild(q);
+    var grid = document.createElement('div'); grid.className = 'fee-grid';
+    FEES5.forEach(function (f, i) {
+      var card = document.createElement('figure'); card.className = 'fee'; card.style.transitionDelay = ((i % 3) * 0.12) + 's';
+      var cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
+      var cap = document.createElement('figcaption'), b = document.createElement('b'), sp2 = document.createElement('span');
+      b.textContent = f.name; sp2.textContent = f.fees; cap.appendChild(b); cap.appendChild(sp2);
+      card.appendChild(cv); card.appendChild(cap); grid.appendChild(card);
+      stories.push({ beat: card, canvas: cv, scene: f.draw, drawn: false, w: 200, h: 140 });
+    });
+    box.appendChild(grid);
+    price.parentNode.insertBefore(box, price);
+    var row = document.createElement('div'); row.className = 'price-row';
+    n.parentNode.insertBefore(row, n); row.appendChild(n);
+    ans.className = 'why'; row.appendChild(ans);
+    stories.push({ beat: row, canvas: null, scene: null, drawn: false });
+    cost.parentNode.removeChild(cost);
   }
   function moeAt(u, settled) {
     var end = helperLetter(), spots = [];
@@ -805,7 +1117,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     ctx.restore();
   }
   function paper(q, k, alpha) {
-    var v4 = VERSION === 4, w = P * 0.25 * k, h = P * 0.325 * k, f = Math.cos(q.fl);
+    var v4 = V4, w = P * 0.25 * k, h = P * 0.325 * k, f = Math.cos(q.fl);
     ctx.save(); ctx.globalAlpha = alpha;
     ctx.translate(q.x, q.y); ctx.rotate(q.rot); ctx.scale(Math.max(v4 ? 0.3 : 0.08, Math.abs(f)), 1);
     ctx.fillStyle = f >= 0 || v4 ? col.panel : col.line;
@@ -851,29 +1163,30 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     return { img: c, w: w, h: h, ox: r * 1.5 + pad, oy: r * 0.75 + pad };
   }
   var papers = [], clouds = [], streaks = [], cloudR = 0;
-  function cloudScale() { return VERSION === 4 ? Math.max(S * 0.75, 56) : Math.max(S, 70); }
+  function cloudScale() { return V4 ? Math.max(S * 0.75, 56) : Math.max(S, 70); }
   function makeClouds() {
     cloudR = cloudScale();
     clouds.forEach(function (c) { c.sprite = cloudSprite(c.r * cloudR); });
   }
   function seed() {
     papers = [];
-    var few = VERSION === 4;
+    var few = V4;
     for (var i = 0, n = W < 600 ? (few ? 14 : 22) : (few ? 24 : 36); i < n; i++) papers.push({
       th: rnd() * 6.283, om: (2.2 + rnd() * 2.4) * (rnd() < 0.85 ? 1 : -1),
       r: few ? 0.7 + rnd() * 1.0 : 0.8 + rnd() * 1.4, rw: 0.1 + rnd() * 0.25, rf: 1 + rnd() * 2,
       h: -1.5 + rnd() * 2.4, hw: 0.1 + rnd() * 0.3, hf: 0.7 + rnd() * 1.6,
       rot: rnd() * 6.283, rs: (rnd() * 2 - 1) * 5, fl: rnd() * 6.283, fs: 3 + rnd() * 6, ph: rnd() * 6.283,
       free: false, x: 0, y: 0, z: 0, vx: 0, vy: 0, a: 1,
-      keep: KEEP3 && i < 3, d: 0.28 + 0.62 * rnd(),
-      j: i, peel: [0.45, 0.62, 0.78][i] || 1
+      keep: KEEP3 && i < 3, d: V5 ? 0.5 + 0.26 * rnd() : 0.28 + 0.62 * rnd(),
+      j: i, peel: (V5 ? [0.24, 0.34, 0.44] : [0.45, 0.62, 0.78])[i] || 1
     });
     papers.forEach(function (q) { q.sr = q.rot; q.sf = q.fl; });
     clouds = [];
-    for (var j = 0, nc = VERSION === 4 ? 5 : 8; j < nc; j++) clouds.push({ x: rnd() * W, y: rnd() * 3000, r: 0.35 + rnd() * 0.55, k: 1.1 + rnd() * 1.3 });
+    for (var j = 0, nc = V4 ? 5 : 8; j < nc; j++) clouds.push({ x: rnd() * W, y: rnd() * 3000, r: 0.35 + rnd() * 0.55, k: 1.1 + rnd() * 1.3 });
     makeClouds();
     streaks = [];
     for (var k = 0; k < 16; k++) streaks.push({ x: rnd() * W, y: rnd() * 3000, l: 40 + rnd() * 90, k: 1.8 + rnd() * 1.6 });
+    if (V5) seedStars5();
   }
   function sky(t, sc, vel, alpha, bottom) {
     if (alpha <= 0.01 || bottom <= 0) return;
@@ -957,7 +1270,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
   function helperSize() { return S * (S <= 70 ? 0.8 : 0.7); }
   var FALL = LINE ? 0.95 : 0.84;
   var state = 'fall', landT = 0, t0 = 0, last = 0, running = false, vel = 0, lastSc = 0, enter = false, side = 1, cx = null, cy = 0;
-  function kick() { if (!running) { running = true; requestAnimationFrame(frame); } }
+  function kick() { if (!running) { running = true; requestAnimationFrame(V5 ? frame5 : frame); } }
   function frame(now) {
     running = false;
     if (!t0) t0 = last = now;
@@ -1078,6 +1391,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     kick();
   }
   function rest() {
+    if (V5) return rest5();
     var sp = spot();
     ctx.clearRect(0, 0, W, H);
     if (VERSION === 3) drawCrowd(crowdSpots(), 1, 9, true);
@@ -1093,9 +1407,266 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
     figure(sp.x, sp.y - reach(REST), 0, REST, 1);
     if (VERSION === 2) [0, 1, 2].forEach(function (j) { var s = rowSlot(j, sp); paper({ x: s.x, y: s.y, rot: s.rot, fl: 0 }, 1.15, 1); });
   }
+  var SLUMP5 = { la: -0.25, ra: 0.25, le: -0.1, re: -0.1, lh: -0.3, rh: 0.3, lk: 0.5, rk: 0.5, o: 0.5 };
+  var REACH5 = { la: -2.6, ra: 2.6, le: 0, re: 0, lh: -0.2, rh: 0.2, lk: 0.1, rk: 0.1, o: 0 };
+  var WIND5 = { la: -2.6, ra: 2.6, le: 0, re: 0, lh: -0.6, rh: 0.6, lk: 1.1, rk: 1.1, o: 0 };
+  var RISE5 = { la: -2.6, ra: 2.6, le: 0, re: 0, lh: -0.06, rh: 0.06, lk: 0.08, rk: 0.08, o: 1 };
+  var TOP5 = { la: -2.6, ra: 2.6, le: 0, re: 0, lh: -0.2, rh: 0.2, lk: 0, rk: 0, o: 0 };
+  var THROW5 = { la: -2.5, ra: 2.7, le: 0.2, re: -0.2, lh: -0.2, rh: 0.25, lk: 0, rk: 0.1, o: 0.6 };
+  var WAVE5 = { la: -0.75, ra: 1.57, le: -1.25, re: 0.73, lh: -0.22, rh: 0.22, lk: 0, rk: 0, o: 0 };
+  var stars5 = [];
+  function seedStars5() {
+    stars5 = [];
+    for (var i = 0; i < 22; i++) stars5.push({ x: rnd(), y: rnd(), r: 0.5 + rnd(), ph: rnd() * 6.283, f: 1.5 + rnd() * 2 });
+  }
+  function space5(sp, bx, yb) {
+    var bar = document.querySelector('.bar'), top = bar ? bar.offsetHeight : 48, k = 0.5, fb = yb - S * 0.15;
+    return { x: lerp(bx, W / 2, 0.4), fy: Math.min(fb - S * 0.9, top + S * 0.3 + 1.9 * S * k), k: k, top: top };
+  }
+  function drawSpace5(g, a, t, sp5) {
+    if (a <= 0.01) return;
+    if (!stars5.length) seedStars5();
+    var top = sp5.top, bottom = g.A - S * 0.3;
+    ctx.save(); ctx.fillStyle = col.ink;
+    stars5.forEach(function (s) {
+      var x = s.x * W, y = top + S * 0.15 + s.y * Math.max(20, bottom - top - S * 0.15);
+      if (y > g.y(x) - S * 0.3) return;
+      if (Math.abs(x - sp5.x) < S * 0.35 && Math.abs(y - (sp5.fy - S * 0.5)) < S * 0.6) return;
+      ctx.globalAlpha = a * (0.35 + 0.35 * s.r);
+      star5(x, y, S * 0.055 * s.r * (0.75 + 0.25 * Math.sin(t * s.f + s.ph)));
+    });
+    var px = sp5.x < W / 2 ? W * 0.8 : W * 0.2, py = top + (bottom - top) * 0.5, r = S * 0.17;
+    if (py - r * 0.8 > top && py + r * 1.3 < g.y(px)) {
+      ctx.globalAlpha = a; ctx.translate(px, py); ctx.rotate(-0.35);
+      ctx.strokeStyle = col.ink; ctx.lineWidth = Math.max(1.5, S * 0.03);
+      ctx.beginPath(); ctx.ellipse(0, 0, r * 1.9, r * 0.5, 0, Math.PI, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = col.panel; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(0, 0, r * 1.9, r * 0.5, 0, 0, Math.PI); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function trail5(x0, y0, x1, y1, e, k, t) {
+    if (e <= 0.002) return;
+    var len = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)) || 1, step = Math.max(0.04, S * 0.4 / len);
+    var fam = getComputedStyle(wordmark).fontFamily;
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (var i = 0; i * step < e - step * 0.3; i++) {
+      var ei = i * step, age = clamp((e - ei) / Math.max(0.3, e)), ks = lerp(1, k, ei);
+      var sw = Math.sin(i * 2.3 + t * 2.4) * S * 0.14 * (0.3 + age);
+      ctx.globalAlpha = 0.3 + 0.65 * (1 - age);
+      ctx.fillStyle = i % 3 === 1 ? col.ink : col.accent;
+      ctx.font = '700 ' + Math.max(9, S * 0.36 * ks * (1 - 0.3 * age)).toFixed(1) + 'px ' + fam;
+      ctx.fillText('$', lerp(x0, x1, ei) + sw, lerp(y0, y1, ei) + S * 0.22 * ks);
+    }
+    ctx.restore();
+  }
+  var burst5 = false;
+  function arc5(sp) {
+    var A = sp.y - S * 2.6, rise = Math.min(S * 1.3, W * 0.13), half = W * 0.56;
+    return { A: A, y: function (x) { var d = (x - W / 2) / half; return A + rise * d * d; } };
+  }
+  function breakX5(sp) { return lerp(sp.x, W / 2, 0.45); }
+  function drawArc5(g, bx, open) {
+    var gap = open * S * 0.75, lift = open * S * 0.28, x;
+    ctx.save(); ctx.strokeStyle = col.ink; ctx.fillStyle = col.ink; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(3, S * 0.065);
+    [[-0.06 * W, bx - gap / 2], [bx + gap / 2, 1.06 * W]].forEach(function (seg) {
+      if (seg[1] <= seg[0]) return;
+      ctx.beginPath();
+      for (x = seg[0]; x <= seg[1] + 0.1; x += 4) {
+        var near = Math.max(0, 1 - Math.abs(x - bx) / (S * 1.1)), y = g.y(x) - lift * near * near;
+        if (x === seg[0]) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+    if (open > 0.02) {
+      var yb = g.y(bx) - lift * 0.6, L = S * 0.42 * open;
+      ctx.lineWidth = Math.max(2, S * 0.045);
+      [[-1, 0.5], [1, 0.5], [-1, 0.95], [1, 0.95]].forEach(function (b, i) {
+        var sx = bx + b[0] * (gap * 0.55 + S * 0.08), sy = yb - S * 0.06, l = L * (i < 2 ? 1 : 0.7);
+        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + b[0] * Math.sin(b[1]) * l, sy - Math.cos(b[1]) * l); ctx.stroke();
+      });
+      [-1, 1].forEach(function (d) {
+        var cx5 = bx + d * (gap * 0.6 + S * 0.75 * open), cy5 = yb - S * 0.7 * open, r = S * 0.13;
+        ctx.beginPath(); ctx.moveTo(cx5 - d * r * 0.8, cy5 + r * 0.5); ctx.lineTo(cx5 + d * r * 0.2, cy5 - r); ctx.lineTo(cx5 + d * r * 0.6, cy5 + r * 0.3);
+        ctx.closePath(); ctx.globalAlpha = open; ctx.fill(); ctx.globalAlpha = 1;
+      });
+    }
+    ctx.restore();
+  }
+  function drillLen5(k) { return S * 0.72 * k; }
+  function drillBase5(hands, k) { return { x: (hands.lx + hands.rx) / 2, y: Math.min(hands.ly, hands.ry) - S * 0.14 * k }; }
+  function hands5(x, y, p, s) {
+    var sy = y - s * 0.36 + s * 0.035;
+    return { rx: x + Math.sin(p.ra) * s * 0.17 + Math.sin(p.ra + p.re) * s * 0.16, ry: sy + Math.cos(p.ra) * s * 0.17 + Math.cos(p.ra + p.re) * s * 0.16,
+      lx: x + Math.sin(p.la) * s * 0.17 + Math.sin(p.la - p.le) * s * 0.16, ly: sy + Math.cos(p.la) * s * 0.17 + Math.cos(p.la - p.le) * s * 0.16 };
+  }
+  function drill5(hands, k, spin, alpha, fast) {
+    if (alpha <= 0.01 || k <= 0.01) return;
+    var b = drillBase5(hands, k), L = drillLen5(k), w = S * 0.3 * k, notch = L * 0.14;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.lineCap = 'round';
+    ctx.strokeStyle = col.ink; ctx.lineWidth = Math.max(2, S * 0.045);
+    ctx.beginPath(); ctx.moveTo(hands.lx, hands.ly); ctx.lineTo(b.x - w * 0.7, b.y - notch * 0.3);
+    ctx.moveTo(hands.rx, hands.ry); ctx.lineTo(b.x + w * 0.7, b.y - notch * 0.3); ctx.stroke();
+    ctx.translate(b.x, b.y);
+    ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(w, 0); ctx.lineTo(0, -notch); ctx.lineTo(-w, 0); ctx.closePath();
+    ctx.fillStyle = col.accent; ctx.fill();
+    ctx.save(); ctx.clip();
+    ctx.globalAlpha = alpha * 0.22; ctx.fillStyle = col.ink;
+    ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(-w, 0); ctx.lineTo(0, -notch); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = alpha * 0.95; ctx.strokeStyle = col.tint; ctx.lineWidth = Math.max(2, S * 0.04);
+    var f = spin - Math.floor(spin);
+    for (var i = -1; i < 4; i++) {
+      var yy = -(i + f) * L * 0.3;
+      ctx.beginPath(); ctx.moveTo(-w, yy + w * 0.9); ctx.lineTo(w, yy - w * 0.9); ctx.stroke();
+    }
+    ctx.restore();
+    if (fast > 0.02) {
+      ctx.globalAlpha = alpha * fast * 0.7; ctx.strokeStyle = col.ink; ctx.lineWidth = Math.max(1.5, S * 0.03);
+      [0.35, 0.62].forEach(function (h) {
+        var yy = -L * h, rx = w * (1 - h) + S * 0.16;
+        ctx.beginPath(); ctx.ellipse(0, yy, rx, rx * 0.28, 0, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+      });
+    }
+    ctx.restore();
+  }
+  function speed5(x, footY, a, t) {
+    if (a <= 0.02) return;
+    ctx.save(); ctx.strokeStyle = col.ink; ctx.lineCap = 'round'; ctx.lineWidth = Math.max(1.5, S * 0.03);
+    for (var i = 0; i < 8; i++) {
+      var lx = x + (i - 3.5) * S * 0.13, off = ((t * S * 9 + i * S * 0.37) % (S * 1.3));
+      ctx.globalAlpha = a * (0.35 + 0.5 * ((i * 7) % 3) / 2);
+      ctx.beginPath(); ctx.moveTo(lx, footY + S * 0.15 + off); ctx.lineTo(lx, footY + S * 0.15 + off + S * (0.35 + 0.1 * (i % 3))); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function helperPose5(u, tp, landed, mv, t) {
+    var p;
+    if (landed) { p = mix(THROW5, WAVE5, smooth(tp / 0.5)); if (tp < 8) p.re += 0.22 * Math.sin(t * 9); return p; }
+    p = mix(REST, HOLD, smooth((u - 0.3) / 0.1));
+    var up = 0;
+    [0.24, 0.34, 0.44].forEach(function (pe) { up = Math.max(up, Math.sin(Math.PI * clamp((u - pe + 0.04) / 0.12))); });
+    p = mix(p, CATCH, 0.7 * up);
+    p.o = u > 0.14 && u < 0.24 ? 0.5 : 0;
+    if (u > 0.52) p = mix(p, THROW5, smooth((u - 0.52) / 0.06));
+    if (u > 0.7) { p = mix(THROW5, WAVE5, smooth((u - 0.7) / 0.1)); p.re += 0.22 * Math.sin(t * 9) * smooth((u - 0.8) / 0.05); }
+    if (mv && mv.moving) {
+      var sw = Math.sin(mv.phase);
+      p.lh = -0.12 + 0.42 * sw; p.rh = 0.12 - 0.42 * sw; p.lk = 0.35 * Math.max(0, -sw); p.rk = 0.35 * Math.max(0, sw);
+    }
+    return p;
+  }
+  function personPose5(u, tp, landed, t) {
+    if (landed) return mix(RISE5, TOP5, smooth(tp / 0.6));
+    if (u < 0.55) { var p = mix(SLUMP5, CROUCH, 0.2); p.lk += 0.06 * Math.sin(t * 2.2); p.rk = p.lk; return p; }
+    if (u < 0.66) return mix(mix(SLUMP5, CROUCH, 0.2), REACH5, smooth((u - 0.55) / 0.08));
+    if (u < 0.74) return mix(REACH5, WIND5, smooth((u - 0.66) / 0.06));
+    return mix(WIND5, RISE5, smooth((u - 0.74) / 0.03));
+  }
+  function frame5(now) {
+    running = false;
+    if (!t0) t0 = last = now;
+    var t = (now - t0) / 1000, dt = Math.min(0.05, Math.max(0.001, (now - last) / 1000)); last = now;
+    var sc = Math.min(window.scrollY, D), u = clamp(sc / (D * FALL));
+    var sp = spot(), g = arc5(sp), bx = breakX5(sp), yb = g.y(bx);
+    if (state === 'fall' && u >= 1) { state = 'land'; landT = t; }
+    else if (state !== 'fall' && u < 0.96) state = 'fall';
+    var landed = state !== 'fall', tp = landed ? t - landT : 0;
+    var kRise = landed ? 1 : smooth((u - 0.74) / 0.12), ease = 1 - Math.pow(1 - kRise, 3);
+    var kL = landed ? 1 : smooth((u - 0.86) / 0.13), sp5 = space5(sp, bx, yb), ks = lerp(1, sp5.k, kL), s5 = S * ks;
+    var p = personPose5(u, tp, landed, t), footEnd = yb - S * 0.15;
+    var x = lerp(sp.x, bx, smooth(kRise)), footY = lerp(sp.y, footEnd, ease);
+    if (kL > 0) { x = lerp(bx, sp5.x, kL); footY = lerp(footEnd, sp5.fy, kL); }
+    var y = footY - reach(p, s5);
+    var kMerge = landed ? 1 : smooth((u - 0.65) / 0.06), kD = lerp(0.4, 1, kMerge) * ks, hd = hands5(x, y, p, s5), db = drillBase5(hd, kD);
+    var hmP = { x: db.x, y: db.y - drillLen5(kD) * 0.5 };
+    var tipY = db.y - drillLen5(kD), open = landed || kL > 0 ? 1 : kRise > 0 ? smooth((g.y(x) - tipY) / (S * 0.45)) : 0;
+    var mv = moeAt(landed ? 1 : clamp(0.18 + 0.62 * (u - 0.08) / 0.42), landed);
+    var hs = helperSize(), hp = helperPose5(u, tp, landed, mv, t), hx = mv.x, hy = mv.y - reach(hp, hs), hm = handMid(hx, hy, hp, hs);
+    emerge(u, mv, landed, tp);
+    if (!burst5 && u > 0.76) { burst5 = true; burst(x); }
+    else if (burst5 && u < 0.72) { burst5 = false; papers.forEach(function (q) { if (!q.keep) { q.free = false; q.drop = false; q.a = 0; } }); }
+    if (cx === null) { cx = x; cy = y - S * 0.2; }
+    cx = lerp(cx, x, Math.min(1, dt * 7)); cy = lerp(cy, y - S * 0.2, Math.min(1, dt * 7));
+    ctx.clearRect(0, 0, W, H);
+    drawSpace5(g, landed ? 1 : smooth((u - 0.84) / 0.08), t, sp5);
+    drawArc5(g, bx, open);
+    var tight = 1 - 0.45 * smooth((u - 0.1) / 0.5), alive = 0;
+    var drillA = kMerge;
+    papers.forEach(function (q) {
+      if (q.keep) {
+        q.th += q.om * dt; q.sr += q.rs * dt; q.sf += q.fs * dt;
+        var r5 = P * (q.r + q.rw * Math.sin(t * q.rf + q.ph)) * tight, h5 = P * (q.h + q.hw * Math.sin(t * q.hf + q.ph)) * tight;
+        var oz = r5 * Math.sin(q.th), ox = cx + r5 * Math.cos(q.th), oy = cy + h5 + oz * 0.12;
+        var kHold = landed ? 1 : smooth((u - q.peel) / 0.08), held = heldPos(q.j, hm);
+        q.x = lerp(ox, held.x, kHold); q.y = lerp(oy, held.y, kHold); q.z = kHold > 0.5 ? 1 : oz; q.k = kHold > 0.5 ? 1 : null;
+        q.kind = kHold > 0.5 ? cardKind(q.j) : 'cv';
+        var kThrow = landed ? 1 : smooth((u - 0.55 - q.j * 0.015) / 0.09);
+        var up = { x: hmP.x + (q.j - 1) * S * 0.32, y: hmP.y - (q.j === 1 ? S * 0.12 : 0) };
+        q.x = lerp(q.x, up.x, kThrow); q.y = lerp(q.y, up.y - Math.sin(Math.PI * kThrow) * S * 0.6, kThrow);
+        q.x = lerp(q.x, hmP.x, kMerge); q.y = lerp(q.y, hmP.y, kMerge);
+        q.rot = lerp(q.sr, Math.round(q.sr / 6.283) * 6.283 + (q.j - 1) * 0.2, kHold) + kThrow * (q.j - 1 || 1) * 6.283 * (1 - kMerge);
+        q.fl = lerp(q.sf, Math.round(q.sf / 6.283) * 6.283, kHold);
+        q.k = (q.k || 1) * (1 + 0.2 * kThrow) * (1 - 0.6 * kMerge);
+        q.a = 1 - kMerge;
+        return;
+      }
+      if (!q.free && u > q.d && u < 0.76) { q.free = true; q.drop = true; q.vx = (rnd() - 0.5) * P * 1.5; q.vy = P * 0.4; }
+      else if (q.free && q.drop && u < q.d - 0.04) { q.free = false; q.drop = false; q.a = 0; }
+      if (!q.free) {
+        q.th += q.om * dt;
+        var r = P * (q.r + q.rw * Math.sin(t * q.rf + q.ph)) * tight, hh = P * (q.h + q.hw * Math.sin(t * q.hf + q.ph)) * tight;
+        q.x = cx + r * Math.cos(q.th); q.z = r * Math.sin(q.th); q.y = cy + hh + q.z * 0.12;
+        q.a = Math.min(1, q.a + dt * 2);
+      } else {
+        q.vy += P * 6 * dt; q.vx *= 1 - 1.2 * dt;
+        q.x += q.vx * dt + Math.sin(t * 3 + q.ph) * P * 0.6 * dt; q.y += q.vy * dt;
+        q.a -= dt * (q.drop ? 0.9 : 0.75);
+      }
+      q.rot += q.rs * dt; q.fl += q.fs * dt;
+      if (q.a > 0) alive++;
+    });
+    figure(hx, hy, 0, hp, 1, hs, true);
+    speed5(x, footY, landed ? 0 : Math.sin(Math.PI * kRise), t);
+    var live = papers.filter(function (q) { return q.a > 0; }).sort(function (a, b) { return a.z - b.z; });
+    live.forEach(function (q) { if (q.z < 0 && !q.keep) paper(q, 1 + q.z / (P * 6), 0.8 * clamp(q.a)); });
+    trail5(bx, footEnd, sp5.x, sp5.fy, kL, sp5.k, t);
+    figure(x, y, 0, p, 1, s5);
+    drill5(hd, kD, t * (kRise > 0 && !landed ? 4 : 1.2), drillA, landed ? 0 : Math.max(Math.sin(Math.PI * kRise), Math.sin(Math.PI * kL)));
+    live.forEach(function (q) { if (q.z >= 0 || q.keep) paper(q, q.k || 1 + q.z / (P * 6), clamp(q.a)); });
+    if (state === 'land' && tp > 1.6 && alive === 0) { state = 'rest'; rest5(); return; }
+    kick();
+  }
+  function rest5() {
+    var sp = spot(), g = arc5(sp), bx = breakX5(sp), yb = g.y(bx), sp5 = space5(sp, bx, yb);
+    ctx.clearRect(0, 0, W, H);
+    drawSpace5(g, 1, 0, sp5);
+    drawArc5(g, bx, 1);
+    letters.concat(words, turnWords).forEach(function (el) { el.style.opacity = '1'; });
+    var hel = letters.length ? letterSpot(helperLetter()) : null;
+    if (hel) { var hs5 = helperSize(); figure(hel.x, hel.y - reach(WAVE5, hs5), 0, WAVE5, 1, hs5, true); }
+    trail5(bx, yb - S * 0.15, sp5.x, sp5.fy, 1, sp5.k, 0);
+    var s5 = S * sp5.k, y = sp5.fy - reach(TOP5, s5);
+    figure(sp5.x, y, 0, TOP5, 1, s5);
+    drill5(hands5(sp5.x, y, TOP5, s5), sp5.k, 0.15, 1, 0);
+  }
+  function brand5() {
+    var bar = document.querySelector('.bar > span');
+    if (!bar) return;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet'; link.href = 'https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap';
+    document.head.appendChild(link);
+    bar.className = 'brand';
+    bar.innerHTML = '<svg viewBox="20 30 760 260" aria-hidden="true">'
+      + '<path d="M 40 270 Q 400 50 760 270" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round"/>'
+      + '<path d="M 330 168 L 300 128 M 470 168 L 500 128 M 352 160 L 340 112 M 448 160 L 460 112" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>'
+      + '<polygon points="262,86 284,58 292,92" fill="currentColor"/><polygon points="538,86 516,58 508,92" fill="currentColor"/>'
+      + '<polygon points="400,44 466,206 400,184 334,206" fill="var(--accent)"/></svg><span class="brand-name">Toppa</span>';
+  }
   function start() {
     if (LINE) { var st = unfurl.querySelector('.statement'); if (st) stage.appendChild(st); }
-    if (VERSION === 4) {
+    if (V4) {
+      if (V5) brand5();
       var turn = document.querySelector('.count .turn') || document.createElement('p'); turn.className = 'turn'; turn.textContent = '';
       TURN.replace(/\. /g, '.\n').split('\n').forEach(function (s) { var sp = document.createElement('span'); sp.textContent = s; turn.appendChild(sp); });
       var acts = unfurl.querySelector('.actions'), small = unfurl.querySelector(':scope > .small');
@@ -1118,7 +1689,9 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
       }
       buildStory([unfurl.querySelector('.lede')], BEATS, 0);
       var voice = document.querySelector('.voice');
-      if (voice) buildStory(Array.prototype.slice.call(voice.querySelectorAll(':scope > p')), VOICE_BEATS, 5, 'flip');
+      if (voice) buildStory(Array.prototype.slice.call(voice.querySelectorAll(':scope > p')), V5 ? VOICE_BEATS5 : VOICE_BEATS,
+        V5 ? [sceneDam, sceneReach, sceneYes5, sceneShovel, sceneBlame] : 5, 'flip');
+      if (V5) price5();
       var fig = unfurl.querySelector('figure');
       var wk2 = Array.prototype.filter.call(document.querySelectorAll('.entries .card'), function (c) { return /week 2/i.test(c.textContent); })[0];
       if (fig && wk2) wk2.appendChild(fig);
@@ -1146,7 +1719,7 @@ html.fall-intro.v4 .unfurl.open > :nth-child(5) { transition-delay: 1s; }
       } else unfurl.classList.add('open', 'done');
       kick();
     } else rest();
-    if (VERSION === 4) showBeats();
+    if (V4) showBeats();
     html.classList.add('fall-ready');
     window.addEventListener('resize', function () { size(); if (!intro || state === 'rest') rest(); else kick(); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { gap = null; if (!intro || state === 'rest') rest(); });
