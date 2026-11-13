@@ -288,7 +288,7 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     </article>
     <article>
       <h3>But you said this costs money...</h3>
-      <p>Yes, I figure charging what coaches do wouldn’t make sense, but spending time shoveling shit should be worth something. Companies pay exec search firms about a third of the person’s first year salary to go find them. This is someone looking for you instead, and some peace of mind, for $50. So pay me if this made a modicum of difference.</p>
+      <p>Yes, I figure charging what coaches do wouldn’t make sense, but spending time shoveling shit should be worth something. Companies pay exec search firms about a third of the person’s first year salary to go find them. This is someone looking for you instead, and some peace of mind, for the price of a dinner out. So pay me if this made a modicum of difference.</p>
     </article>
   </section>
 
@@ -735,6 +735,27 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     ctx.beginPath(); ctx.moveTo(95, 74); ctx.lineTo(100, 88); ctx.lineTo(106, 74); ctx.closePath(); ctx.fill(); ctx.stroke();
     ctx.fillStyle = col.panel; ctx.fillRect(96, 71, 9, 3);
     ctx.fillStyle = col.ink; ctx.fillText(said, bx + 9, 67);
+  }
+  function sceneBurrito() {
+    var gy = 152; ground(gy);
+    var ms = 64, hx = 74, hy = gy - 15;
+    pen(1.8); ctx.beginPath();
+    ctx.moveTo(hx - 13, hy + 1); ctx.lineTo(hx + 9, hy + 1); ctx.moveTo(hx - 13, hy + 1); ctx.lineTo(hx - 15, hy - 28);
+    ctx.moveTo(hx - 13, hy + 1); ctx.lineTo(hx - 13, gy); ctx.moveTo(hx + 7, hy + 1); ctx.lineTo(hx + 7, gy); ctx.stroke();
+    var EAT = { la: -0.35, ra: 0.75, le: 0.1, re: 1.9, lh: 1.5, rh: 1.45, lk: -1.45, rk: 1.45, o: 0 };
+    figure(hx, hy, 0, EAT, 1, ms, true);
+    var h = handOf(hx, hy, EAT, ms, 'r');
+    ctx.save(); ctx.translate(h.x - 1, h.y - 3); ctx.rotate(-0.25);
+    pen(1.5); ctx.fillStyle = col.panel; ctx.beginPath();
+    ctx.moveTo(2, -5); ctx.lineTo(22, -5); ctx.arc(22, 0, 5, -Math.PI / 2, Math.PI / 2); ctx.lineTo(2, 5);
+    ctx.arc(2, 2.6, 2.4, Math.PI / 2, -Math.PI / 2, true); ctx.arc(2, -2.6, 2.4, Math.PI / 2, -Math.PI / 2, true);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(13, -5); ctx.lineTo(13, 5); ctx.moveTo(16, -5); ctx.lineTo(19, 0); ctx.lineTo(16, 5); ctx.moveTo(21, -4); ctx.lineTo(24, 0); ctx.lineTo(21, 4); ctx.stroke();
+    ctx.restore();
+    var rx = 186; robot(rx, gy, 0.85);
+    ctx.fillStyle = col.ink; ctx.font = '700 8px ' + getComputedStyle(wordmark).fontFamily; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('API', rx, gy - 33); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    payArc5(hx + 18, hy - 62, rx - 6, gy - 90, 3, 26);
   }
   function hr5(i) { var s = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return s - Math.floor(s); }
   function ground5(y, x0, x1) { pen(1.5); ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.globalAlpha = 1; }
@@ -1689,6 +1710,12 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
         fine.className = 'scene'; fcv.setAttribute('aria-hidden', 'true'); fine.appendChild(fcv);
         turn.parentNode.insertBefore(fine, turn);
         stories.push({ beat: fine, canvas: fcv, scene: 9, drawn: false });
+        if (V5 && say) {
+          var food = document.createElement('div'), bcv = document.createElement('canvas');
+          food.className = 'scene'; bcv.setAttribute('aria-hidden', 'true'); food.appendChild(bcv);
+          say.parentNode.insertBefore(food, say.nextSibling);
+          stories.push({ beat: food, canvas: bcv, scene: sceneBurrito, drawn: false });
+        }
       }
       buildStory([unfurl.querySelector('.lede')], BEATS, 0);
       var voice = document.querySelector('.voice');
