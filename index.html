@@ -288,7 +288,7 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     </article>
     <article>
       <h3>But you said this costs money...</h3>
-      <p>Yes, I figure charging what coaches do wouldn’t make sense, but spending time shoveling shit should be worth something. So pay me if this made a modicum of difference.</p>
+      <p>Yes, I figure charging what coaches do wouldn’t make sense, but spending time shoveling shit should be worth something. Companies pay exec search firms about a third of the person’s first year salary to go find them. This is someone looking for you instead, and some peace of mind, for $50. So pay me if this made a modicum of difference.</p>
     </article>
   </section>
 
@@ -891,23 +891,22 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     ctx.beginPath(); ctx.arc(bh.x - 1, bh.y + 3, 4, Math.PI, 0); ctx.stroke();
     payArc5(h.x + 6, h.y - 26, rx + 17, ry - 44, 3, 22);
   }
-  function feeHouse() {
-    var gy = 126; ground5(gy, 10, 190);
-    house5(18, 58, gy, 42, 30);
-    ctx.strokeRect(40, gy - 22, 13, 22); ctx.strokeRect(24, gy - 34, 11, 10); ctx.strokeRect(59, gy - 34, 11, 10);
-    pen(1.8); ctx.beginPath(); ctx.moveTo(92, gy); ctx.lineTo(92, gy - 56); ctx.lineTo(120, gy - 56); ctx.stroke();
-    pen(1.2); ctx.beginPath(); ctx.moveTo(99, gy - 56); ctx.lineTo(99, gy - 50); ctx.moveTo(115, gy - 56); ctx.lineTo(115, gy - 50); ctx.stroke();
-    pen(1.5); ctx.fillStyle = col.panel; ctx.fillRect(95, gy - 50, 24, 14); ctx.strokeRect(95, gy - 50, 24, 14);
-    ctx.fillStyle = col.ink; ctx.font = '700 8px ' + getComputedStyle(wordmark).fontFamily; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('SOLD', 107, gy - 42.5); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
-    var CARRY5 = { la: -0.35, ra: 0.3, le: -0.3, re: 2.74, lh: -0.3, rh: 0.3, lk: 0.3, rk: 0.1, o: 0 }, ms = 54, mx = 146;
-    var my = gy - reach(CARRY5, ms), hand = handOf(mx, my, CARRY5, ms, 'r'), nx = hand.x + 1, ny = hand.y - 2;
-    pen(1.8); ctx.fillStyle = col.panel;
-    ctx.beginPath(); ctx.moveTo(nx, ny); ctx.bezierCurveTo(nx + 30, ny - 6, nx + 40, ny + 30, nx + 20, ny + 36); ctx.bezierCurveTo(nx + 4, ny + 40, nx - 4, ny + 20, nx, ny);
-    ctx.closePath(); ctx.fill(); ctx.stroke();
-    dollar5(nx + 19, ny + 20, 15, 1);
-    figure(mx, my, 0, CARRY5, 1, ms); tie5(mx, my, ms);
-    payArc5(52, gy - 26, nx + 10, ny - 6, 2, 16);
+  function block5(x0, w, ht, gy) {
+    pen(1.6); ctx.fillStyle = col.panel; ctx.fillRect(x0, gy - ht, w, ht); ctx.strokeRect(x0, gy - ht, w, ht);
+    pen(1.1);
+    for (var r = 0; r < Math.floor((ht - 20) / 12); r++) for (var c = 0; c < 2; c++) ctx.strokeRect(x0 + 6 + c * (w - 20), gy - ht + 7 + r * 12, 8, 6);
+    pen(1.4); ctx.strokeRect(x0 + w / 2 - 5, gy - 13, 10, 13);
+  }
+  function feeApply() {
+    var gy = 126, ms = 56; ground5(gy, 10, 190);
+    block5(110, 34, 74, gy); block5(152, 36, 50, gy);
+    var px = 38, py = gy - reach(PAY5, ms); figure(px, py, 0, PAY5, 1, ms);
+    var h = handOf(px, py, PAY5, ms, 'r');
+    pen(1.4); ctx.fillStyle = col.panel;
+    [2, 0].forEach(function (d) { ctx.fillRect(h.x - 2 + d * 3, h.y - 24 - d * 2, 15, 20); ctx.strokeRect(h.x - 2 + d * 3, h.y - 24 - d * 2, 15, 20); });
+    ctx.fillStyle = col.ink; [0, 1, 2].forEach(function (i) { ctx.fillRect(h.x + 1, h.y - 20 + i * 5, i === 2 ? 5 : 9, 1.6); });
+    payArc5(h.x + 6, h.y - 28, 127, gy - 80, 1, 12);
+    payArc5(h.x + 10, h.y - 26, 170, gy - 56, 1, 34);
   }
   function ticket5(x, y, w, ht, rot, mark) {
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot); pen(1.5); ctx.fillStyle = col.panel;
@@ -985,7 +984,7 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
   }
   var FEES5 = [
     { draw: feeDelivery, name: 'Food delivery', fees: 'Service fee. Delivery fee. Small order fee.' },
-    { draw: feeHouse, name: 'Selling a house', fees: 'The agents’ commission.' },
+    { draw: feeApply, name: 'Renting a place', fees: 'Application fee.' },
     { draw: feeTickets, name: 'Concert tickets', fees: 'Service fee. Facility charge. Delivery fee.' },
     { draw: feeBank, name: 'The bank', fees: 'Overdraft fee.' },
     { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.' },
