@@ -218,13 +218,14 @@ html.v5 .story .beat.center canvas, html.v5 .story.flip .beat.center canvas { or
 html.v5 .beat.center p { font-size: 30px; line-height: 36px; font-weight: 600; }
 html.v5 .fees5 { width: 100%; max-width: 760px; display: grid; gap: 26px; justify-items: center; text-align: center; }
 html.v5 .fees5 h3 { font-size: 20px; line-height: 28px; }
-html.v5 .fee-grid { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 20px; }
+html.v5 .fee-grid { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px 20px; }
+html.v5 .fee-grid .fee { flex: 0 0 calc((100% - 40px) / 3); }
 html.v5 .fee { margin: 0; display: grid; gap: 6px; justify-items: center; align-content: start; }
 html.v5 .fee canvas { width: 100%; max-width: 220px; height: auto; aspect-ratio: 200 / 140; }
 html.v5 .fee figcaption { font-size: 13px; line-height: 19px; color: var(--text); max-width: 200px; }
 html.v5 .fee figcaption b { display: block; font-size: 14px; color: var(--ink); }
 html.v5 .fee figcaption .joke { display: block; margin-top: 2px; opacity: .75; }
-@media (max-width: 600px) { html.v5 .fee-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; } }
+@media (max-width: 600px) { html.v5 .fee-grid { gap: 24px 12px; } html.v5 .fee-grid .fee { flex-basis: calc((100% - 12px) / 2); } }
 html.fall-intro.v5 .fee, html.fall-intro.v5 .price-row { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
 html.fall-intro.v5 .fee.in, html.fall-intro.v5 .price-row.in { opacity: 1; transform: none; }
 html.v5 .price-row { display: grid; gap: 14px; justify-items: center; }
@@ -988,29 +989,12 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     ctx.fillStyle = col.ink; ctx.beginPath(); ctx.arc(cx0 + 2, gy - 2.6, 2.4, 0, Math.PI * 2); ctx.arc(cx0 + 12, gy - 2.6, 2.4, 0, Math.PI * 2); ctx.fill();
     payArc5(px + 10, py - 30, 143, gy - 74, 2, 18);
   }
-  function feeCar() {
-    var gy = 126, ms = 56; ground5(gy, 10, 190);
-    pen(1.6); ctx.fillStyle = col.panel;
-    ctx.beginPath(); ctx.moveTo(102, gy - 12); ctx.lineTo(102, gy - 27); ctx.quadraticCurveTo(104, gy - 32, 114, gy - 33); ctx.lineTo(124, gy - 33);
-    ctx.lineTo(134, gy - 48); ctx.lineTo(164, gy - 48); ctx.lineTo(176, gy - 33); ctx.quadraticCurveTo(190, gy - 32, 190, gy - 23); ctx.lineTo(190, gy - 12); ctx.closePath(); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(129, gy - 34); ctx.lineTo(137, gy - 45); ctx.lineTo(148, gy - 45); ctx.lineTo(148, gy - 34); ctx.closePath();
-    ctx.moveTo(152, gy - 34); ctx.lineTo(152, gy - 45); ctx.lineTo(162, gy - 45); ctx.lineTo(171, gy - 34); ctx.closePath(); ctx.stroke();
-    [118, 172].forEach(function (wx) { ctx.beginPath(); ctx.arc(wx, gy - 9, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.arc(wx, gy - 9, 2.5, 0, Math.PI * 2); ctx.fillStyle = col.ink; ctx.fill(); ctx.fillStyle = col.panel; });
-    pen(1.2);
-    for (var i = 0; i < 8; i++) { ctx.fillStyle = col.panel; ctx.fillRect(62 + (i % 2) * 2, gy - 6 - i * 6, 26, 6); ctx.strokeRect(62 + (i % 2) * 2, gy - 6 - i * 6, 26, 6); }
-    var SIGN5 = { la: -0.3, ra: 1.75, le: 0.1, re: 0.2, lh: -0.15, rh: 0.15, lk: 0, rk: 0, o: 0.6 };
-    var px = 34, py = gy - reach(SIGN5, ms); figure(px, py, 0, SIGN5, 1, ms);
-    var h = handOf(px, py, SIGN5, ms, 'r');
-    pen(1.8); ctx.beginPath(); ctx.moveTo(h.x - 2, h.y + 2); ctx.lineTo(h.x + 8, h.y - 6); ctx.stroke();
-    payArc5(px + 8, py - 34, 150, gy - 56, 2, 16);
-  }
   var FEES5 = [
     { draw: feeDelivery, name: 'Food delivery', fees: 'Service fee. Delivery fee. Small order fee.', joke: 'Says delivered, never showed up fee.' },
     { draw: feeApply, name: 'Renting a place', fees: 'Application fee.', joke: 'Bad neighbour fee.' },
     { draw: feeTickets, name: 'Concert tickets', fees: 'Service fee. Facility charge. Delivery fee.', joke: 'Three hours in the queue fee.' },
     { draw: feeBank, name: 'The bank', fees: 'Overdraft fee.', joke: 'Being poor fee.' },
-    { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.', joke: 'Strip the beds yourself fee.' },
-    { draw: feeCar, name: 'A new car', fees: 'Doc fee.' }
+    { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.', joke: 'Strip the beds yourself fee.' }
   ];
   function price5() {
     var cost = Array.prototype.filter.call(document.querySelectorAll('#how article'), function (a) { return /costs money/i.test(a.textContent); })[0];
