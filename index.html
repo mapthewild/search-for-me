@@ -223,6 +223,7 @@ html.v5 .fee { margin: 0; display: grid; gap: 6px; justify-items: center; align-
 html.v5 .fee canvas { width: 100%; max-width: 220px; height: auto; aspect-ratio: 200 / 140; }
 html.v5 .fee figcaption { font-size: 13px; line-height: 19px; color: var(--text); max-width: 200px; }
 html.v5 .fee figcaption b { display: block; font-size: 14px; color: var(--ink); }
+html.v5 .fee figcaption .joke { display: block; margin-top: 2px; opacity: .75; }
 @media (max-width: 600px) { html.v5 .fee-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; } }
 html.fall-intro.v5 .fee, html.fall-intro.v5 .price-row { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
 html.fall-intro.v5 .fee.in, html.fall-intro.v5 .price-row.in { opacity: 1; transform: none; }
@@ -1004,11 +1005,11 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
     payArc5(px + 8, py - 34, 150, gy - 56, 2, 16);
   }
   var FEES5 = [
-    { draw: feeDelivery, name: 'Food delivery', fees: 'Service fee. Delivery fee. Small order fee.' },
-    { draw: feeApply, name: 'Renting a place', fees: 'Application fee.' },
-    { draw: feeTickets, name: 'Concert tickets', fees: 'Service fee. Facility charge. Delivery fee.' },
-    { draw: feeBank, name: 'The bank', fees: 'Overdraft fee.' },
-    { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.' },
+    { draw: feeDelivery, name: 'Food delivery', fees: 'Service fee. Delivery fee. Small order fee.', joke: 'Says delivered, never showed up fee.' },
+    { draw: feeApply, name: 'Renting a place', fees: 'Application fee.', joke: 'Bad neighbour fee.' },
+    { draw: feeTickets, name: 'Concert tickets', fees: 'Service fee. Facility charge. Delivery fee.', joke: 'Three hours in the queue fee.' },
+    { draw: feeBank, name: 'The bank', fees: 'Overdraft fee.', joke: 'Being poor fee.' },
+    { draw: feeRental, name: 'A short rental', fees: 'Cleaning fee. Service fee.', joke: 'Strip the beds yourself fee.' },
     { draw: feeCar, name: 'A new car', fees: 'Doc fee.' }
   ];
   function price5() {
@@ -1025,6 +1026,7 @@ html.v5 .price-row .why { font-size: 17px; line-height: 27px; color: var(--ink);
       var cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
       var cap = document.createElement('figcaption'), b = document.createElement('b'), sp2 = document.createElement('span');
       b.textContent = f.name; sp2.textContent = f.fees; cap.appendChild(b); cap.appendChild(sp2);
+      if (f.joke) { var jk = document.createElement('i'); jk.className = 'joke'; jk.textContent = f.joke; cap.appendChild(jk); }
       card.appendChild(cv); card.appendChild(cap); grid.appendChild(card);
       stories.push({ beat: card, canvas: cv, scene: f.draw, drawn: false, w: 200, h: 140 });
     });
